@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useDocumentariesStore } from '@/stores/documentaries'
+import { useLocalePath } from '@/composables/useLocalePath'
 import { Search, SlidersHorizontal, X, Loader2 } from 'lucide-vue-next'
 import DocCard from '@/components/docs/DocCard.vue'
 import type { DocumentaryFilters } from '@/types'
 
+const { t } = useI18n()
+const { currentLang } = useLocalePath()
 const route = useRoute()
 const router = useRouter()
 const docStore = useDocumentariesStore()
@@ -49,13 +53,13 @@ async function applyFilters() {
   if (filters.value.is_free) query.is_free = 'true'
   if (filters.value.ordering) query.ordering = filters.value.ordering
 
-  await router.push({ query })
+  await router.push({ params: { lang: currentLang.value }, query })
 }
 
 function clearFilters() {
   searchQuery.value = ''
   filters.value = { ordering: '-year' }
-  router.push({ query: {} })
+  router.push({ params: { lang: currentLang.value }, query: {} })
 }
 
 function setupIntersectionObserver() {
@@ -104,7 +108,7 @@ watch(
     <!-- Header -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
       <h1 class="text-3xl font-bold text-slate-900 dark:text-white">
-        Browse Documentaries
+        {{ t('browse.title') }}
       </h1>
 
       <!-- Search -->
@@ -115,7 +119,7 @@ watch(
             v-model="searchQuery"
             @keyup.enter="applyFilters"
             type="text"
-            placeholder="Search documentaries..."
+            :placeholder="t('browse.searchPlaceholder')"
             class="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -134,12 +138,12 @@ watch(
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <!-- Sport filter -->
         <div>
-          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Sport</label>
+          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{{ t('browse.filters.sport') }}</label>
           <select
             v-model="filters.sport"
             class="w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg"
           >
-            <option value="">All Sports</option>
+            <option value="">{{ t('browse.filters.allSports') }}</option>
             <option v-for="sport in docStore.sports" :key="sport.id" :value="sport.slug">
               {{ sport.name }}
             </option>
@@ -148,12 +152,12 @@ watch(
 
         <!-- Theme filter -->
         <div>
-          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Theme</label>
+          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{{ t('browse.filters.theme') }}</label>
           <select
             v-model="filters.theme"
             class="w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg"
           >
-            <option value="">All Themes</option>
+            <option value="">{{ t('browse.filters.allThemes') }}</option>
             <option v-for="theme in docStore.themes" :key="theme.id" :value="theme.slug">
               {{ theme.name }}
             </option>
@@ -162,12 +166,12 @@ watch(
 
         <!-- Region filter -->
         <div>
-          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Region</label>
+          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{{ t('browse.filters.region') }}</label>
           <select
             v-model="filters.region"
             class="w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg"
           >
-            <option value="">All Regions</option>
+            <option value="">{{ t('browse.filters.allRegions') }}</option>
             <option v-for="region in docStore.regions" :key="region.id" :value="region.slug">
               {{ region.name }}
             </option>
@@ -176,12 +180,12 @@ watch(
 
         <!-- Platform filter -->
         <div>
-          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Platform</label>
+          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{{ t('browse.filters.platform') }}</label>
           <select
             v-model="filters.platform"
             class="w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg"
           >
-            <option value="">All Platforms</option>
+            <option value="">{{ t('browse.filters.allPlatforms') }}</option>
             <option v-for="platform in docStore.platforms" :key="platform.id" :value="platform.slug">
               {{ platform.name }}
             </option>
@@ -193,12 +197,12 @@ watch(
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
         <!-- Year range -->
         <div>
-          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Year</label>
+          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{{ t('browse.filters.year') }}</label>
           <div class="flex gap-2">
             <input
               v-model.number="filters.year_min"
               type="number"
-              placeholder="From"
+              :placeholder="t('browse.filters.from')"
               min="1900"
               max="2100"
               class="w-full px-2 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-sm"
@@ -206,7 +210,7 @@ watch(
             <input
               v-model.number="filters.year_max"
               type="number"
-              placeholder="To"
+              :placeholder="t('browse.filters.to')"
               min="1900"
               max="2100"
               class="w-full px-2 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-sm"
@@ -216,12 +220,12 @@ watch(
 
         <!-- Duration range -->
         <div>
-          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Duration (min)</label>
+          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{{ t('browse.filters.duration') }}</label>
           <div class="flex gap-2">
             <input
               v-model.number="filters.duration_min"
               type="number"
-              placeholder="Min"
+              :placeholder="t('browse.filters.minDuration')"
               min="1"
               max="600"
               class="w-full px-2 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-sm"
@@ -229,7 +233,7 @@ watch(
             <input
               v-model.number="filters.duration_max"
               type="number"
-              placeholder="Max"
+              :placeholder="t('browse.filters.maxDuration')"
               min="1"
               max="600"
               class="w-full px-2 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-sm"
@@ -239,17 +243,17 @@ watch(
 
         <!-- Sort -->
         <div>
-          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Sort by</label>
+          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{{ t('browse.filters.sortBy') }}</label>
           <select
             v-model="filters.ordering"
             class="w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg"
           >
-            <option value="-year">Newest First</option>
-            <option value="year">Oldest First</option>
-            <option value="-created_at">Recently Added</option>
-            <option value="title">Title A-Z</option>
-            <option value="duration_minutes">Shortest First</option>
-            <option value="-duration_minutes">Longest First</option>
+            <option value="-year">{{ t('browse.sort.newest') }}</option>
+            <option value="year">{{ t('browse.sort.oldest') }}</option>
+            <option value="-created_at">{{ t('browse.sort.recentlyAdded') }}</option>
+            <option value="title">{{ t('browse.sort.titleAZ') }}</option>
+            <option value="duration_minutes">{{ t('browse.sort.shortest') }}</option>
+            <option value="-duration_minutes">{{ t('browse.sort.longest') }}</option>
           </select>
         </div>
 
@@ -257,7 +261,7 @@ watch(
         <div class="flex items-end">
           <label class="flex items-center gap-2 cursor-pointer pb-2">
             <input type="checkbox" v-model="filters.is_free" class="rounded" />
-            <span class="text-sm text-slate-700 dark:text-slate-300">Free to watch</span>
+            <span class="text-sm text-slate-700 dark:text-slate-300">{{ t('browse.filters.freeToWatch') }}</span>
           </label>
         </div>
       </div>
@@ -269,14 +273,14 @@ watch(
           class="text-sm text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 flex items-center gap-1"
         >
           <X class="w-4 h-4" />
-          Clear filters
+          {{ t('browse.filters.clearFilters') }}
         </button>
 
         <button
           @click="applyFilters"
           class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
         >
-          Apply Filters
+          {{ t('browse.filters.applyFilters') }}
         </button>
       </div>
     </div>
@@ -287,12 +291,12 @@ watch(
     </div>
 
     <div v-else-if="docStore.documentaries.length === 0" class="text-center py-12">
-      <p class="text-slate-500 dark:text-slate-400">No documentaries found matching your criteria.</p>
+      <p class="text-slate-500 dark:text-slate-400">{{ t('browse.noResults') }}</p>
     </div>
 
     <div v-else>
       <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">
-        {{ docStore.totalCount }} documentaries found
+        {{ t('browse.resultsCount', { count: docStore.totalCount }) }}
       </p>
 
       <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
@@ -310,10 +314,10 @@ watch(
       >
         <div v-if="docStore.loadingMore" class="flex items-center gap-2 text-slate-500">
           <Loader2 class="w-5 h-5 animate-spin" />
-          <span>Loading more...</span>
+          <span>{{ t('browse.loadingMore') }}</span>
         </div>
         <p v-else-if="!docStore.hasNext && docStore.documentaries.length > 0" class="text-slate-400 text-sm">
-          You've reached the end
+          {{ t('browse.endOfResults') }}
         </p>
       </div>
     </div>

@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
 import { User, Mail, Calendar, Pencil, X, Check } from 'lucide-vue-next'
 
+const { t } = useI18n()
 const authStore = useAuthStore()
 const user = computed(() => authStore.user)
 
@@ -57,14 +59,14 @@ async function saveProfile() {
 <template>
   <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="flex items-center justify-between mb-8">
-      <h1 class="text-3xl font-bold text-slate-900 dark:text-white">My Profile</h1>
+      <h1 class="text-3xl font-bold text-slate-900 dark:text-white">{{ t('profile.title') }}</h1>
       <button
         v-if="!isEditing"
         @click="startEditing"
         class="inline-flex items-center gap-2 px-4 py-2 text-sm bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-600"
       >
         <Pencil class="w-4 h-4" />
-        Edit Profile
+        {{ t('profile.editButton') }}
       </button>
     </div>
 
@@ -84,7 +86,7 @@ async function saveProfile() {
           <!-- View Mode -->
           <template v-if="!isEditing">
             <h2 class="text-xl font-semibold text-slate-900 dark:text-white">
-              {{ user?.username || 'User' }}
+              {{ user?.username || t('profile.defaultName') }}
             </h2>
 
             <div class="mt-4 space-y-2 text-slate-600 dark:text-slate-400">
@@ -94,7 +96,7 @@ async function saveProfile() {
               </p>
               <p class="flex items-center gap-2">
                 <Calendar class="w-4 h-4" />
-                Member since {{ new Date(user?.date_joined || '').toLocaleDateString() }}
+                {{ t('common.memberSince') }} {{ new Date(user?.date_joined || '').toLocaleDateString() }}
               </p>
             </div>
 
@@ -102,7 +104,7 @@ async function saveProfile() {
               <p class="text-slate-700 dark:text-slate-300">{{ user.profile.bio }}</p>
             </div>
             <div v-else class="mt-4">
-              <p class="text-slate-500 dark:text-slate-500 italic">No bio yet. Click "Edit Profile" to add one.</p>
+              <p class="text-slate-500 dark:text-slate-500 italic">{{ t('profile.noBio') }}</p>
             </div>
           </template>
 
@@ -111,7 +113,7 @@ async function saveProfile() {
             <form @submit.prevent="saveProfile" class="space-y-4">
               <div>
                 <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                  Username
+                  {{ t('profile.username') }}
                 </label>
                 <input
                   v-model="editForm.username"
@@ -123,12 +125,12 @@ async function saveProfile() {
 
               <div>
                 <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                  Bio
+                  {{ t('profile.bio') }}
                 </label>
                 <textarea
                   v-model="editForm.bio"
                   rows="3"
-                  placeholder="Tell us about yourself..."
+                  :placeholder="t('profile.bioPlaceholder')"
                   class="w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                 ></textarea>
               </div>
@@ -144,7 +146,7 @@ async function saveProfile() {
                   class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
                 >
                   <Check class="w-4 h-4" />
-                  {{ isSaving ? 'Saving...' : 'Save Changes' }}
+                  {{ isSaving ? t('profile.saving') : t('profile.saveButton') }}
                 </button>
                 <button
                   type="button"
@@ -153,7 +155,7 @@ async function saveProfile() {
                   class="inline-flex items-center gap-2 px-4 py-2 text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
                 >
                   <X class="w-4 h-4" />
-                  Cancel
+                  {{ t('profile.cancelButton') }}
                 </button>
               </div>
             </form>

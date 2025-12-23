@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { Mountain } from 'lucide-vue-next'
+import { useLocalePath } from '@/composables/useLocalePath'
+
+const { t } = useI18n()
+const { localePath } = useLocalePath()
 </script>
 
 <template>
@@ -9,38 +14,37 @@ import { Mountain } from 'lucide-vue-next'
       <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
         <!-- Brand -->
         <div class="col-span-1 md:col-span-2">
-          <RouterLink to="/" class="flex items-center gap-2 text-xl font-bold text-slate-900 dark:text-white mb-4">
+          <RouterLink :to="localePath('/')" class="flex items-center gap-2 text-xl font-bold text-slate-900 dark:text-white mb-4">
             <Mountain class="w-8 h-8 text-blue-600" />
             <span>Bivouac.tv</span>
           </RouterLink>
           <p class="text-slate-600 dark:text-slate-400 max-w-md">
-            The basecamp for adventure, nature & extreme sports documentaries.
-            Discover, rate, and share your favorite outdoor films.
+            {{ t('footer.tagline') }}
           </p>
         </div>
 
         <!-- Browse -->
         <div>
-          <h3 class="font-semibold text-slate-900 dark:text-white mb-4">Browse</h3>
+          <h3 class="font-semibold text-slate-900 dark:text-white mb-4">{{ t('footer.browseTitle') }}</h3>
           <ul class="space-y-2">
             <li>
-              <RouterLink to="/browse?sport=climbing" class="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400">
-                Climbing
+              <RouterLink :to="localePath('/browse') + '?sport=climbing'" class="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400">
+                {{ t('footer.climbing') }}
               </RouterLink>
             </li>
             <li>
-              <RouterLink to="/browse?sport=skiing" class="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400">
-                Skiing
+              <RouterLink :to="localePath('/browse') + '?sport=skiing'" class="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400">
+                {{ t('footer.skiing') }}
               </RouterLink>
             </li>
             <li>
-              <RouterLink to="/browse?sport=surfing" class="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400">
-                Surfing
+              <RouterLink :to="localePath('/browse') + '?sport=surfing'" class="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400">
+                {{ t('footer.surfing') }}
               </RouterLink>
             </li>
             <li>
-              <RouterLink to="/browse?is_free=true" class="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400">
-                Free to Watch
+              <RouterLink :to="localePath('/browse') + '?is_free=true'" class="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400">
+                {{ t('nav.freeToWatch') }}
               </RouterLink>
             </li>
           </ul>
@@ -48,16 +52,16 @@ import { Mountain } from 'lucide-vue-next'
 
         <!-- About -->
         <div>
-          <h3 class="font-semibold text-slate-900 dark:text-white mb-4">About</h3>
+          <h3 class="font-semibold text-slate-900 dark:text-white mb-4">{{ t('footer.aboutTitle') }}</h3>
           <ul class="space-y-2">
             <li>
-              <RouterLink to="/submit" class="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400">
-                Submit a Doc
+              <RouterLink :to="localePath('/submit')" class="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400">
+                {{ t('footer.submitDoc') }}
               </RouterLink>
             </li>
             <li>
               <a href="mailto:hello@bivouac.tv" class="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400">
-                Contact
+                {{ t('footer.contact') }}
               </a>
             </li>
           </ul>
@@ -65,7 +69,7 @@ import { Mountain } from 'lucide-vue-next'
       </div>
 
       <div class="mt-8 pt-8 border-t border-slate-200 dark:border-slate-700 text-center text-slate-500 dark:text-slate-400 text-sm">
-        <p>&copy; {{ new Date().getFullYear() }} Bivouac.tv. Made with love for adventure.</p>
+        <p>&copy; {{ new Date().getFullYear() }} Bivouac.tv. {{ t('footer.madeWith') }}</p>
       </div>
     </div>
   </footer>

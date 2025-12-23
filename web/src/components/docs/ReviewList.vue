@@ -1,15 +1,22 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { formatDistanceToNow } from 'date-fns'
+import { fr, enUS } from 'date-fns/locale'
+import { useI18n } from 'vue-i18n'
 import StarRating from '@/components/common/StarRating.vue'
 import type { Review } from '@/types'
+
+const { t, locale } = useI18n()
 
 defineProps<{
   reviews: Review[]
   loading?: boolean
 }>()
 
+const dateLocale = computed(() => locale.value === 'fr' ? fr : enUS)
+
 function formatDate(dateString: string): string {
-  return formatDistanceToNow(new Date(dateString), { addSuffix: true })
+  return formatDistanceToNow(new Date(dateString), { addSuffix: true, locale: dateLocale.value })
 }
 </script>
 
@@ -20,7 +27,7 @@ function formatDate(dateString: string): string {
     </div>
 
     <div v-else-if="reviews.length === 0" class="text-center py-8 text-slate-500 dark:text-slate-400">
-      No reviews yet. Be the first to share your thoughts!
+      {{ t('doc.noReviews') }}
     </div>
 
     <div v-else class="space-y-4">

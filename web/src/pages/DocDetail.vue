@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
+import { RouterLink } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useDocumentariesStore } from '@/stores/documentaries'
 import { useAuthStore } from '@/stores/auth'
 import { reviewsApi } from '@/services/api'
+import { useLocalePath } from '@/composables/useLocalePath'
 import {
   Star, Clock, Calendar, Play, ExternalLink,
   Bookmark, BookmarkCheck, MapPin
@@ -11,6 +14,8 @@ import ReviewForm from '@/components/docs/ReviewForm.vue'
 import ReviewList from '@/components/docs/ReviewList.vue'
 import type { Review } from '@/types'
 
+const { t } = useI18n()
+const { localePath } = useLocalePath()
 const props = defineProps<{ slug: string }>()
 
 const docStore = useDocumentariesStore()
@@ -144,7 +149,7 @@ onMounted(() => {
               class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
             >
               <Play class="w-4 h-4" />
-              Watch Trailer
+              {{ t('doc.watchTrailer') }}
             </a>
 
             <button
@@ -154,7 +159,7 @@ onMounted(() => {
             >
               <BookmarkCheck v-if="doc.is_in_watchlist" class="w-4 h-4" />
               <Bookmark v-else class="w-4 h-4" />
-              {{ doc.is_in_watchlist ? 'In Watchlist' : 'Add to Watchlist' }}
+              {{ doc.is_in_watchlist ? t('doc.inWatchlist') : t('doc.addToWatchlist') }}
             </button>
           </div>
 
@@ -168,7 +173,7 @@ onMounted(() => {
             <RouterLink
               v-for="sport in doc.sports"
               :key="sport.id"
-              :to="`/browse?sport=${sport.slug}`"
+              :to="localePath(`/browse?sport=${sport.slug}`)"
               class="px-3 py-1 bg-blue-600/20 text-blue-400 rounded-full text-sm hover:bg-blue-600/30"
             >
               {{ sport.name }}
@@ -176,7 +181,7 @@ onMounted(() => {
             <RouterLink
               v-for="theme in doc.themes"
               :key="theme.id"
-              :to="`/browse?theme=${theme.slug}`"
+              :to="localePath(`/browse?theme=${theme.slug}`)"
               class="px-3 py-1 bg-slate-600/50 text-slate-300 rounded-full text-sm hover:bg-slate-600/70"
             >
               {{ theme.name }}
@@ -193,7 +198,7 @@ onMounted(() => {
 
           <!-- Directors -->
           <div v-if="doc.directors.length" class="text-slate-400 mb-6">
-            <span class="text-slate-500">Directed by: </span>
+            <span class="text-slate-500">{{ t('doc.directedBy') }} </span>
             <span v-for="(director, i) in doc.directors" :key="director.id">
               {{ director.name }}<span v-if="i < doc.directors.length - 1">, </span>
             </span>
@@ -203,7 +208,7 @@ onMounted(() => {
 
       <!-- Where to Watch -->
       <section class="mt-12">
-        <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-6">Where to Watch</h2>
+        <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-6">{{ t('doc.whereToWatch') }}</h2>
         <div v-if="doc.availabilities.length" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <a
             v-for="availability in doc.availabilities"
@@ -223,7 +228,7 @@ onMounted(() => {
                 {{ availability.platform.name }}
               </p>
               <p class="text-sm text-slate-500">
-                {{ availability.is_free ? 'Free' : 'Subscription' }}
+                {{ availability.is_free ? t('common.free') : t('common.subscription') }}
               </p>
             </div>
             <ExternalLink class="w-5 h-5 text-slate-400" />
@@ -231,10 +236,10 @@ onMounted(() => {
         </div>
         <div v-else class="p-6 bg-slate-100 dark:bg-slate-800 rounded-lg text-center">
           <p class="text-slate-600 dark:text-slate-400 mb-2">
-            No streaming information available yet.
+            {{ t('doc.noStreaming') }}
           </p>
           <p class="text-sm text-slate-500 dark:text-slate-500">
-            Know where to watch this documentary? Help us by submitting a link!
+            {{ t('doc.helpStreaming') }}
           </p>
         </div>
       </section>
@@ -242,7 +247,7 @@ onMounted(() => {
       <!-- Reviews Section -->
       <section class="mt-12">
         <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-6">
-          Reviews
+          {{ t('doc.reviews') }}
           <span v-if="reviews.length" class="text-lg font-normal text-slate-500">
             ({{ reviews.length }})
           </span>

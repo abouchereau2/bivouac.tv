@@ -12,19 +12,44 @@ from .models import (
 )
 
 
-class SportSerializer(serializers.ModelSerializer):
+def get_request_language(context):
+    """Get language from request context."""
+    request = context.get("request")
+    if request:
+        # Try query_params (DRF request) or GET (Django request)
+        query_params = getattr(request, "query_params", None) or getattr(request, "GET", {})
+        lang = query_params.get("lang") or getattr(request, "LANGUAGE_CODE", "en")
+        return lang[:2] if lang else "en"
+    return "en"
+
+
+class I18nNameMixin:
+    """Mixin to add language-aware name field."""
+
+    def get_name(self, obj):
+        lang = get_request_language(self.context)
+        return obj.get_name(lang)
+
+
+class SportSerializer(I18nNameMixin, serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
+
     class Meta:
         model = Sport
         fields = ["id", "name", "slug", "icon"]
 
 
-class ThemeSerializer(serializers.ModelSerializer):
+class ThemeSerializer(I18nNameMixin, serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
+
     class Meta:
         model = Theme
         fields = ["id", "name", "slug"]
 
 
-class RegionSerializer(serializers.ModelSerializer):
+class RegionSerializer(I18nNameMixin, serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
+
     class Meta:
         model = Region
         fields = ["id", "name", "slug"]
@@ -89,6 +114,7 @@ class DocumentaryDetailSerializer(serializers.ModelSerializer):
     average_rating = serializers.ReadOnlyField()
     review_count = serializers.ReadOnlyField()
     is_in_watchlist = serializers.SerializerMethodField()
+    synopsis = serializers.SerializerMethodField()
 
     class Meta:
         model = Documentary
@@ -100,6 +126,11 @@ class DocumentaryDetailSerializer(serializers.ModelSerializer):
             "availabilities", "average_rating", "review_count",
             "is_in_watchlist", "created_at", "updated_at"
         ]
+
+    def get_synopsis(self, obj):
+        """Return synopsis based on request language preference."""
+        lang = get_request_language(self.context)
+        return obj.get_synopsis(lang)
 
     def get_is_in_watchlist(self, obj):
         request = self.context.get("request")

@@ -1,15 +1,40 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
-import { Mountain, Search, User, LogOut, Plus, Bookmark } from 'lucide-vue-next'
+import { Mountain, Search, User, LogOut, Plus, Bookmark, Globe } from 'lucide-vue-next'
+import { setLocale, SUPPORTED_LOCALES, type SupportedLocale } from '@/i18n'
 
+const { t, locale } = useI18n()
+const route = useRoute()
+const router = useRouter()
 const authStore = useAuthStore()
 const isAuthenticated = computed(() => authStore.isAuthenticated)
 const user = computed(() => authStore.user)
 
+// Get current language from route
+const currentLang = computed(() => (route.params.lang as string) || 'en')
+
+// Build localized route
+function localePath(path: string) {
+  return `/${currentLang.value}${path}`
+}
+
+// Switch language
+function switchLanguage(lang: SupportedLocale) {
+  if (lang === locale.value) return
+
+  setLocale(lang)
+
+  // Update current route with new language
+  const newPath = route.fullPath.replace(`/${currentLang.value}`, `/${lang}`)
+  router.push(newPath)
+}
+
 async function handleLogout() {
   await authStore.logout()
+  router.push(localePath('/'))
 }
 </script>
 
@@ -18,7 +43,7 @@ async function handleLogout() {
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-16">
         <!-- Logo -->
-        <RouterLink to="/" class="flex items-center gap-2 text-xl font-bold text-slate-900 dark:text-white">
+        <RouterLink :to="localePath('/')" class="flex items-center gap-2 text-xl font-bold text-slate-900 dark:text-white">
           <Mountain class="w-8 h-8 text-blue-600" />
           <span>Bivouac.tv</span>
         </RouterLink>
@@ -26,24 +51,43 @@ async function handleLogout() {
         <!-- Navigation -->
         <nav class="hidden md:flex items-center gap-6">
           <RouterLink
-            to="/browse"
+            :to="localePath('/browse')"
             class="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors"
           >
-            Browse
+            {{ t('nav.browse') }}
           </RouterLink>
           <RouterLink
-            to="/browse?is_free=true"
+            :to="localePath('/browse') + '?is_free=true'"
             class="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors"
           >
-            Free to Watch
+            {{ t('nav.freeToWatch') }}
           </RouterLink>
         </nav>
 
         <!-- Right side -->
         <div class="flex items-center gap-4">
+          <!-- Language Switcher -->
+          <div class="relative group">
+            <button class="flex items-center gap-1 p-2 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors">
+              <Globe class="w-5 h-5" />
+              <span class="text-sm font-medium uppercase">{{ locale }}</span>
+            </button>
+            <div class="absolute right-0 mt-2 w-32 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+              <button
+                v-for="lang in SUPPORTED_LOCALES"
+                :key="lang"
+                @click="switchLanguage(lang)"
+                class="w-full text-left px-4 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 first:rounded-t-lg last:rounded-b-lg"
+                :class="{ 'bg-slate-100 dark:bg-slate-700': locale === lang }"
+              >
+                {{ t(`languages.${lang}`) }}
+              </button>
+            </div>
+          </div>
+
           <!-- Search -->
           <RouterLink
-            to="/browse"
+            :to="localePath('/browse')"
             class="p-2 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors"
           >
             <Search class="w-5 h-5" />
@@ -52,17 +96,17 @@ async function handleLogout() {
           <!-- Authenticated user menu -->
           <template v-if="isAuthenticated">
             <RouterLink
-              to="/watchlist"
+              :to="localePath('/watchlist')"
               class="p-2 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors"
-              title="Watchlist"
+              :title="t('nav.watchlist')"
             >
               <Bookmark class="w-5 h-5" />
             </RouterLink>
 
             <RouterLink
-              to="/submit"
+              :to="localePath('/submit')"
               class="p-2 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors"
-              title="Submit a documentary"
+              :title="t('nav.submit')"
             >
               <Plus class="w-5 h-5" />
             </RouterLink>
@@ -76,23 +120,23 @@ async function handleLogout() {
               <!-- Dropdown -->
               <div class="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
                 <RouterLink
-                  to="/profile"
+                  :to="localePath('/profile')"
                   class="block px-4 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-t-lg"
                 >
-                  Profile
+                  {{ t('nav.profile') }}
                 </RouterLink>
                 <RouterLink
-                  to="/watchlist"
+                  :to="localePath('/watchlist')"
                   class="block px-4 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
                 >
-                  My Watchlist
+                  {{ t('nav.watchlist') }}
                 </RouterLink>
                 <button
                   @click="handleLogout"
                   class="w-full text-left px-4 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-b-lg flex items-center gap-2"
                 >
                   <LogOut class="w-4 h-4" />
-                  Logout
+                  {{ t('nav.logout') }}
                 </button>
               </div>
             </div>
@@ -101,16 +145,16 @@ async function handleLogout() {
           <!-- Guest menu -->
           <template v-else>
             <RouterLink
-              to="/login"
+              :to="localePath('/login')"
               class="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors"
             >
-              Login
+              {{ t('nav.login') }}
             </RouterLink>
             <RouterLink
-              to="/register"
+              :to="localePath('/register')"
               class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
-              Sign Up
+              {{ t('nav.signup') }}
             </RouterLink>
           </template>
         </div>

@@ -29,6 +29,12 @@ dependencies = [
     "drf-spectacular>=0.29.0",
     # HTTP client for external APIs (TMDB, etc.)
     "httpx>=0.28,<1.0",
+    # Web scraping
+    "beautifulsoup4>=4.12,<5.0",
+    "lxml>=5.3,<6.0",
+    # AI enrichment
+    "anthropic>=0.40,<1.0",
+    "simple-justwatch-python-api>=0.16",
 ]
 
 [project.optional-dependencies]

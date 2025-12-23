@@ -1,0 +1,188 @@
+{
+  "common": {
+    "loading": "Chargement...",
+    "error": "Une erreur est survenue",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "submit": "Soumettre",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "clear": "Effacer",
+    "apply": "Appliquer",
+    "viewAll": "Voir tout",
+    "free": "Gratuit",
+    "subscription": "Abonnement",
+    "min": "min",
+    "memberSince": "Membre depuis"
+  },
+  "nav": {
+    "home": "Accueil",
+    "browse": "Explorer",
+    "freeToWatch": "Gratuit",
+    "submit": "Proposer un documentaire",
+    "profile": "Profil",
+    "watchlist": "Ma Liste",
+    "login": "Connexion",
+    "signup": "Inscription",
+    "logout": "Déconnexion"
+  },
+  "home": {
+    "heroTitle1": "Le Camp de Base des",
+    "heroTitle2": "Documentaires d'Aventure",
+    "heroSubtitle": "Découvrez les meilleurs documentaires d'escalade, de ski, de surf et de nature. Trouvez où les regarder, notez vos favoris et partagez vos découvertes.",
+    "browseDocs": "Explorer les documentaires",
+    "watchFree": "Regarder gratuitement",
+    "featured": "Documentaires à la une",
+    "topRated": "Les mieux notés",
+    "recentlyAdded": "Ajouts récents",
+    "browseBySport": "Explorer par sport",
+    "submitCta": "Vous connaissez un super documentaire ?",
+    "submitCtaDescription": "Aidez à enrichir notre collection en proposant des documentaires que vous avez découverts. Partagez l'aventure avec la communauté.",
+    "submitButton": "Proposer un documentaire"
+  },
+  "browse": {
+    "title": "Explorer les documentaires",
+    "searchPlaceholder": "Rechercher des documentaires...",
+    "filters": {
+      "sport": "Sport",
+      "theme": "Thème",
+      "region": "Région",
+      "platform": "Plateforme",
+      "allSports": "Tous les sports",
+      "allThemes": "Tous les thèmes",
+      "allRegions": "Toutes les régions",
+      "allPlatforms": "Toutes les plateformes",
+      "year": "Année",
+      "from": "De",
+      "to": "À",
+      "duration": "Durée (min)",
+      "minDuration": "Min",
+      "maxDuration": "Max",
+      "sortBy": "Trier par",
+      "freeToWatch": "Gratuit",
+      "clearFilters": "Effacer les filtres",
+      "applyFilters": "Appliquer les filtres"
+    },
+    "sort": {
+      "newest": "Plus récents",
+      "oldest": "Plus anciens",
+      "recentlyAdded": "Récemment ajoutés",
+      "titleAZ": "Titre A-Z",
+      "shortest": "Plus courts",
+      "longest": "Plus longs"
+    },
+    "noResults": "Aucun documentaire ne correspond à vos critères.",
+    "resultsCount": "{count} documentaires trouvés",
+    "loadingMore": "Chargement...",
+    "endOfResults": "Vous avez tout vu"
+  },
+  "doc": {
+    "watchTrailer": "Voir la bande-annonce",
+    "inWatchlist": "Dans ma liste",
+    "addToWatchlist": "Ajouter à ma liste",
+    "removeFromWatchlist": "Retirer de ma liste",
+    "whereToWatch": "Où regarder",
+    "noStreaming": "Aucune information de diffusion disponible.",
+    "helpStreaming": "Vous savez où regarder ce documentaire ? Aidez-nous en proposant un lien !",
+    "reviews": "Avis",
+    "noReviews": "Aucun avis pour le moment. Soyez le premier à partager votre opinion !",
+    "directedBy": "Réalisé par :"
+  },
+  "review": {
+    "editTitle": "Modifier votre avis",
+    "createTitle": "Noter ce documentaire",
+    "yourRating": "Votre note",
+    "reviewLabel": "Avis (optionnel)",
+    "reviewPlaceholder": "Partagez votre opinion sur ce documentaire...",
+    "saving": "Enregistrement...",
+    "updateButton": "Mettre à jour",
+    "submitButton": "Publier l'avis",
+    "signInPrompt": "Connectez-vous pour noter et donner votre avis",
+    "signInButton": "Se connecter"
+  },
+  "auth": {
+    "login": {
+      "title": "Bon retour",
+      "subtitle": "Connectez-vous à votre compte",
+      "email": "Email",
+      "password": "Mot de passe",
+      "submit": "Se connecter",
+      "submitting": "Connexion...",
+      "noAccount": "Pas encore de compte ?",
+      "signUpLink": "S'inscrire",
+      "invalidCredentials": "Email ou mot de passe incorrect"
+    },
+    "register": {
+      "title": "Créer un compte",
+      "subtitle": "Rejoignez la communauté des documentaires d'aventure",
+      "email": "Email",
+      "password": "Mot de passe",
+      "confirmPassword": "Confirmer le mot de passe",
+      "submit": "Créer le compte",
+      "submitting": "Création du compte...",
+      "hasAccount": "Déjà un compte ?",
+      "signInLink": "Se connecter",
+      "passwordMismatch": "Les mots de passe ne correspondent pas",
+      "passwordTooShort": "Le mot de passe doit contenir au moins 8 caractères"
+    }
+  },
+  "profile": {
+    "title": "Mon Profil",
+    "editButton": "Modifier le profil",
+    "defaultName": "Utilisateur",
+    "noBio": "Pas de bio. Cliquez sur « Modifier le profil » pour en ajouter une.",
+    "username": "Nom d'utilisateur",
+    "bio": "Bio",
+    "bioPlaceholder": "Parlez-nous de vous...",
+    "saving": "Enregistrement...",
+    "saveButton": "Enregistrer",
+    "cancelButton": "Annuler"
+  },
+  "watchlist": {
+    "title": "Ma Liste",
+    "empty": "Votre liste est vide",
+    "emptyDescription": "Commencez à ajouter des documentaires à regarder plus tard.",
+    "browseButton": "Explorer les documentaires"
+  },
+  "submit": {
+    "title": "Proposer un documentaire",
+    "thankYou": "Merci !",
+    "thankYouDescription": "Votre proposition a été reçue et sera examinée prochainement.",
+    "description": "Vous connaissez un super documentaire d'aventure qui n'est pas sur Bivouac.tv ? Proposez-le ici et aidez à enrichir notre collection !",
+    "fields": {
+      "title": "Titre du documentaire *",
+      "titlePlaceholder": "ex : Free Solo",
+      "year": "Année *",
+      "link": "Lien *",
+      "linkPlaceholder": "https://... (bande-annonce ou plateforme de streaming)",
+      "linkHelp": "Lien vers une bande-annonce, une page IMDb ou une plateforme de streaming",
+      "notes": "Notes supplémentaires",
+      "notesPlaceholder": "Toute information supplémentaire sur le documentaire..."
+    },
+    "submitting": "Envoi en cours...",
+    "submitButton": "Proposer le documentaire"
+  },
+  "notFound": {
+    "code": "404",
+    "title": "Page introuvable",
+    "description": "On dirait que vous vous êtes égaré du sentier.",
+    "homeButton": "Retour au camp de base"
+  },
+  "footer": {
+    "tagline": "Le camp de base des documentaires d'aventure, de nature et de sports extrêmes. Découvrez, notez et partagez vos films préférés.",
+    "browseTitle": "Explorer",
+    "climbing": "Escalade",
+    "skiing": "Ski",
+    "surfing": "Surf",
+    "aboutTitle": "À propos",
+    "submitDoc": "Proposer un doc",
+    "contact": "Contact",
+    "madeWith": "Fait avec passion pour l'aventure."
+  },
+  "languages": {
+    "en": "English",
+    "fr": "Français"
+  }
+}

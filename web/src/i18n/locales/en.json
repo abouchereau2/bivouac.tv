@@ -1,0 +1,188 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "submit": "Submit",
+    "search": "Search",
+    "filter": "Filter",
+    "clear": "Clear",
+    "apply": "Apply",
+    "viewAll": "View all",
+    "free": "Free",
+    "subscription": "Subscription",
+    "min": "min",
+    "memberSince": "Member since"
+  },
+  "nav": {
+    "home": "Home",
+    "browse": "Browse",
+    "freeToWatch": "Free to Watch",
+    "submit": "Submit a documentary",
+    "profile": "Profile",
+    "watchlist": "My Watchlist",
+    "login": "Login",
+    "signup": "Sign Up",
+    "logout": "Logout"
+  },
+  "home": {
+    "heroTitle1": "The Basecamp for",
+    "heroTitle2": "Adventure Documentaries",
+    "heroSubtitle": "Discover the best climbing, skiing, surfing, and nature documentaries. Find where to watch, rate your favorites, and share discoveries.",
+    "browseDocs": "Browse Documentaries",
+    "watchFree": "Watch Free",
+    "featured": "Featured Documentaries",
+    "topRated": "Top Rated",
+    "recentlyAdded": "Recently Added",
+    "browseBySport": "Browse by Sport",
+    "submitCta": "Know a great documentary?",
+    "submitCtaDescription": "Help grow our collection by submitting documentaries you've discovered. Share the adventure with the community.",
+    "submitButton": "Submit a Documentary"
+  },
+  "browse": {
+    "title": "Browse Documentaries",
+    "searchPlaceholder": "Search documentaries...",
+    "filters": {
+      "sport": "Sport",
+      "theme": "Theme",
+      "region": "Region",
+      "platform": "Platform",
+      "allSports": "All Sports",
+      "allThemes": "All Themes",
+      "allRegions": "All Regions",
+      "allPlatforms": "All Platforms",
+      "year": "Year",
+      "from": "From",
+      "to": "To",
+      "duration": "Duration (min)",
+      "minDuration": "Min",
+      "maxDuration": "Max",
+      "sortBy": "Sort by",
+      "freeToWatch": "Free to watch",
+      "clearFilters": "Clear filters",
+      "applyFilters": "Apply Filters"
+    },
+    "sort": {
+      "newest": "Newest First",
+      "oldest": "Oldest First",
+      "recentlyAdded": "Recently Added",
+      "titleAZ": "Title A-Z",
+      "shortest": "Shortest First",
+      "longest": "Longest First"
+    },
+    "noResults": "No documentaries found matching your criteria.",
+    "resultsCount": "{count} documentaries found",
+    "loadingMore": "Loading more...",
+    "endOfResults": "You've reached the end"
+  },
+  "doc": {
+    "watchTrailer": "Watch Trailer",
+    "inWatchlist": "In Watchlist",
+    "addToWatchlist": "Add to Watchlist",
+    "removeFromWatchlist": "Remove from watchlist",
+    "whereToWatch": "Where to Watch",
+    "noStreaming": "No streaming information available yet.",
+    "helpStreaming": "Know where to watch this documentary? Help us by submitting a link!",
+    "reviews": "Reviews",
+    "noReviews": "No reviews yet. Be the first to share your thoughts!",
+    "directedBy": "Directed by:"
+  },
+  "review": {
+    "editTitle": "Edit Your Review",
+    "createTitle": "Rate This Documentary",
+    "yourRating": "Your Rating",
+    "reviewLabel": "Review (optional)",
+    "reviewPlaceholder": "Share your thoughts about this documentary...",
+    "saving": "Saving...",
+    "updateButton": "Update Review",
+    "submitButton": "Submit Review",
+    "signInPrompt": "Sign in to rate and review this documentary",
+    "signInButton": "Sign In"
+  },
+  "auth": {
+    "login": {
+      "title": "Welcome back",
+      "subtitle": "Sign in to your account",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Sign In",
+      "submitting": "Signing in...",
+      "noAccount": "Don't have an account?",
+      "signUpLink": "Sign up",
+      "invalidCredentials": "Invalid email or password"
+    },
+    "register": {
+      "title": "Create an account",
+      "subtitle": "Join the adventure documentary community",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "submit": "Create Account",
+      "submitting": "Creating account...",
+      "hasAccount": "Already have an account?",
+      "signInLink": "Sign in",
+      "passwordMismatch": "Passwords do not match",
+      "passwordTooShort": "Password must be at least 8 characters"
+    }
+  },
+  "profile": {
+    "title": "My Profile",
+    "editButton": "Edit Profile",
+    "defaultName": "User",
+    "noBio": "No bio yet. Click \"Edit Profile\" to add one.",
+    "username": "Username",
+    "bio": "Bio",
+    "bioPlaceholder": "Tell us about yourself...",
+    "saving": "Saving...",
+    "saveButton": "Save Changes",
+    "cancelButton": "Cancel"
+  },
+  "watchlist": {
+    "title": "My Watchlist",
+    "empty": "Your watchlist is empty",
+    "emptyDescription": "Start adding documentaries you want to watch later.",
+    "browseButton": "Browse documentaries"
+  },
+  "submit": {
+    "title": "Submit a Documentary",
+    "thankYou": "Thank you!",
+    "thankYouDescription": "Your submission has been received and will be reviewed soon.",
+    "description": "Know a great adventure documentary that's not on Bivouac.tv? Submit it here and help grow our collection!",
+    "fields": {
+      "title": "Documentary Title *",
+      "titlePlaceholder": "e.g., Free Solo",
+      "year": "Year *",
+      "link": "Link *",
+      "linkPlaceholder": "https://... (trailer or streaming link)",
+      "linkHelp": "Link to a trailer, IMDb page, or streaming platform",
+      "notes": "Additional Notes",
+      "notesPlaceholder": "Any additional information about the documentary..."
+    },
+    "submitting": "Submitting...",
+    "submitButton": "Submit Documentary"
+  },
+  "notFound": {
+    "code": "404",
+    "title": "Page not found",
+    "description": "Looks like you've wandered off the trail.",
+    "homeButton": "Return to Base Camp"
+  },
+  "footer": {
+    "tagline": "The basecamp for adventure, nature & extreme sports documentaries. Discover, rate, and share your favorite outdoor films.",
+    "browseTitle": "Browse",
+    "climbing": "Climbing",
+    "skiing": "Skiing",
+    "surfing": "Surfing",
+    "aboutTitle": "About",
+    "submitDoc": "Submit a Doc",
+    "contact": "Contact",
+    "madeWith": "Made with love for adventure."
+  },
+  "languages": {
+    "en": "English",
+    "fr": "Français"
+  }
+}

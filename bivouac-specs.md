@@ -437,6 +437,30 @@ uv run python manage.py autotag_ai --api-key $ANTHROPIC_API_KEY
 | ~~Pagination~~ | Infinite scroll implemented | ✅ Done |
 | ~~Profile editing~~ | Edit username and bio | ✅ Done |
 
+whats next:
+- proper scrapping workflow
+  - i find the list of documentaries title, we need to:
+  - check tmdb to find basic metadata
+  - if not found, or if found but sometimes we have no posters, no synopsis (very important) or no trailer, so we need to scrap that
+  - use AI to generate tags / location
+  - find a way to scrap "Where to watch links"
+- user profile enhancements:
+  - add funny pre loaded avatars, based on our themes
+  - or user can add a profile picture
+  - user can add new documentaries
+  - user can add new "Where to watch links"
+  - create and give badges to users based on their commitment
+  - add a most proficient users section in home page
+  - show user badges next to their profile (in reviews, etc)
+- users public watchlist:
+  - add a full list creation/visualization made by users for public use
+- when user commits some changes, add a system of admin queue validation (me), only the validation gives the user badges
+- enhance homepage, like justwatch, with "sliders" of movies based on popular themes, like 'popular', 'survival', 'mountain', etc...
+- put all the filters on the footer
+- make the website fr / eng trad
+- from detailed doc view, make the directors name clickable, and filter docs
+- add public API
+
 ---
 
 ## 📈 Launch Strategy

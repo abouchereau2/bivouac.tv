@@ -1,10 +1,15 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { Star, Clock, Bookmark, BookmarkCheck } from 'lucide-vue-next'
 import { useAuthStore } from '@/stores/auth'
 import { useDocumentariesStore } from '@/stores/documentaries'
+import { useLocalePath } from '@/composables/useLocalePath'
 import type { DocumentaryListItem } from '@/types'
+
+const { t } = useI18n()
+const { localePath } = useLocalePath()
 
 const props = defineProps<{
   documentary: DocumentaryListItem
@@ -33,7 +38,7 @@ async function toggleWatchlist() {
 
 <template>
   <div class="group relative">
-    <RouterLink :to="`/doc/${documentary.slug}`" class="block">
+    <RouterLink :to="localePath(`/doc/${documentary.slug}`)" class="block">
       <!-- Poster -->
       <div class="aspect-[2/3] bg-slate-200 dark:bg-slate-700 rounded-lg overflow-hidden mb-3">
         <img
@@ -91,7 +96,7 @@ async function toggleWatchlist() {
       v-if="authStore.isAuthenticated"
       @click.prevent="toggleWatchlist"
       class="absolute top-2 right-2 p-2 bg-black/50 backdrop-blur rounded-full text-white hover:bg-black/70 transition-colors"
-      :title="documentary.is_in_watchlist ? 'Remove from watchlist' : 'Add to watchlist'"
+      :title="documentary.is_in_watchlist ? t('doc.removeFromWatchlist') : t('doc.addToWatchlist')"
     >
       <BookmarkCheck v-if="documentary.is_in_watchlist" class="w-4 h-4" />
       <Bookmark v-else class="w-4 h-4" />

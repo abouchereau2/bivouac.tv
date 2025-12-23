@@ -1,10 +1,14 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useDocumentariesStore } from '@/stores/documentaries'
+import { useLocalePath } from '@/composables/useLocalePath'
 import { Search, Play, Star, Mountain } from 'lucide-vue-next'
 import DocCard from '@/components/docs/DocCard.vue'
 
+const { t } = useI18n()
+const { localePath } = useLocalePath()
 const docStore = useDocumentariesStore()
 
 onMounted(async () => {
@@ -26,27 +30,26 @@ onMounted(async () => {
           <Mountain class="w-16 h-16 text-blue-400" />
         </div>
         <h1 class="text-4xl md:text-6xl font-bold mb-6">
-          The Basecamp for<br>
-          <span class="text-blue-400">Adventure Documentaries</span>
+          {{ t('home.heroTitle1') }}<br>
+          <span class="text-blue-400">{{ t('home.heroTitle2') }}</span>
         </h1>
         <p class="text-xl text-slate-300 mb-8 max-w-2xl mx-auto">
-          Discover the best climbing, skiing, surfing, and nature documentaries.
-          Find where to watch, rate your favorites, and share discoveries.
+          {{ t('home.heroSubtitle') }}
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
           <RouterLink
-            to="/browse"
+            :to="localePath('/browse')"
             class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold"
           >
             <Search class="w-5 h-5" />
-            Browse Documentaries
+            {{ t('home.browseDocs') }}
           </RouterLink>
           <RouterLink
-            to="/browse?is_free=true"
+            :to="localePath('/browse') + '?is_free=true'"
             class="inline-flex items-center gap-2 px-6 py-3 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-colors font-semibold backdrop-blur"
           >
             <Play class="w-5 h-5" />
-            Watch Free
+            {{ t('home.watchFree') }}
           </RouterLink>
         </div>
       </div>
@@ -58,13 +61,13 @@ onMounted(async () => {
         <div class="flex items-center justify-between mb-8">
           <h2 class="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
             <Star class="w-6 h-6 text-yellow-500" />
-            Featured Documentaries
+            {{ t('home.featured') }}
           </h2>
           <RouterLink
-            to="/browse?is_featured=true"
+            :to="localePath('/browse') + '?is_featured=true'"
             class="text-blue-600 hover:text-blue-700 font-medium"
           >
-            View all
+            {{ t('common.viewAll') }}
           </RouterLink>
         </div>
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
@@ -82,13 +85,13 @@ onMounted(async () => {
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between mb-8">
           <h2 class="text-2xl font-bold text-slate-900 dark:text-white">
-            Top Rated
+            {{ t('home.topRated') }}
           </h2>
           <RouterLink
-            to="/browse?ordering=-average_rating"
+            :to="localePath('/browse') + '?ordering=-average_rating'"
             class="text-blue-600 hover:text-blue-700 font-medium"
           >
-            View all
+            {{ t('common.viewAll') }}
           </RouterLink>
         </div>
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
@@ -106,13 +109,13 @@ onMounted(async () => {
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between mb-8">
           <h2 class="text-2xl font-bold text-slate-900 dark:text-white">
-            Recently Added
+            {{ t('home.recentlyAdded') }}
           </h2>
           <RouterLink
-            to="/browse?ordering=-created_at"
+            :to="localePath('/browse') + '?ordering=-created_at'"
             class="text-blue-600 hover:text-blue-700 font-medium"
           >
-            View all
+            {{ t('common.viewAll') }}
           </RouterLink>
         </div>
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
@@ -129,13 +132,13 @@ onMounted(async () => {
     <section class="py-16 bg-slate-50 dark:bg-slate-800">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-8 text-center">
-          Browse by Sport
+          {{ t('home.browseBySport') }}
         </h2>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
           <RouterLink
             v-for="sport in docStore.sports.slice(0, 8)"
             :key="sport.id"
-            :to="`/browse?sport=${sport.slug}`"
+            :to="localePath('/browse') + `?sport=${sport.slug}`"
             class="p-6 bg-white dark:bg-slate-700 rounded-xl shadow-sm hover:shadow-md transition-shadow text-center"
           >
             <span class="text-lg font-semibold text-slate-900 dark:text-white">
@@ -149,16 +152,15 @@ onMounted(async () => {
     <!-- CTA Section -->
     <section class="py-16 bg-blue-600 text-white">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h2 class="text-3xl font-bold mb-4">Know a great documentary?</h2>
+        <h2 class="text-3xl font-bold mb-4">{{ t('home.submitCta') }}</h2>
         <p class="text-blue-100 mb-8 max-w-2xl mx-auto">
-          Help grow our collection by submitting documentaries you've discovered.
-          Share the adventure with the community.
+          {{ t('home.submitCtaDescription') }}
         </p>
         <RouterLink
-          to="/submit"
+          :to="localePath('/submit')"
           class="inline-flex items-center gap-2 px-6 py-3 bg-white text-blue-600 rounded-lg hover:bg-blue-50 transition-colors font-semibold"
         >
-          Submit a Documentary
+          {{ t('home.submitButton') }}
         </RouterLink>
       </div>
     </section>

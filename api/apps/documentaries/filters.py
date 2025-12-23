@@ -39,11 +39,12 @@ class DocumentaryFilter(django_filters.FilterSet):
         ]
 
     def filter_search(self, queryset, name, value):
-        """Search in title, original_title, and synopsis."""
+        """Search in title, original_title, and both synopsis languages."""
         return queryset.filter(
             models.Q(title__icontains=value) |
             models.Q(original_title__icontains=value) |
-            models.Q(synopsis__icontains=value)
+            models.Q(synopsis_en__icontains=value) |
+            models.Q(synopsis_fr__icontains=value)
         )
 
 

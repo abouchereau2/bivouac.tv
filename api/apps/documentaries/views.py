@@ -15,6 +15,7 @@ from .models import (
 )
 from .serializers import (
     DocumentaryDetailSerializer,
+    DocumentaryHeroSerializer,
     DocumentaryListSerializer,
     PersonSerializer,
     PlatformSerializer,
@@ -86,6 +87,38 @@ class DocumentaryViewSet(viewsets.ReadOnlyModelViewSet):
             queryset, many=True, context={"request": request}
         )
         return Response(serializer.data)
+
+    @action(detail=False, methods=["get"])
+    def hero(self, request):
+        """Get a random documentary with backdrop for hero section."""
+        # Get any documentary that has a backdrop (prefer recent ones)
+        queryset = (
+            self.get_queryset()
+            .exclude(backdrop="")
+            .exclude(backdrop__isnull=True)
+            .prefetch_related("sports")
+            .order_by("?")  # Random order
+        )
+        documentary = queryset.first()
+        if documentary:
+            serializer = DocumentaryHeroSerializer(
+                documentary, context={"request": request}
+            )
+            return Response(serializer.data)
+        # Fallback: any documentary with a poster
+        fallback = (
+            self.get_queryset()
+            .exclude(poster="")
+            .exclude(poster__isnull=True)
+            .order_by("-created_at")
+            .first()
+        )
+        if fallback:
+            serializer = DocumentaryHeroSerializer(
+                fallback, context={"request": request}
+            )
+            return Response(serializer.data)
+        return Response(None)
 
     @action(detail=True, methods=["post"], permission_classes=[permissions.IsAuthenticated])
     def add_to_watchlist(self, request, slug=None):

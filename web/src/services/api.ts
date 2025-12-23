@@ -4,6 +4,7 @@ import type {
   Documentary,
   DocumentaryFilters,
   DocumentaryListItem,
+  HeroDocumentary,
   PaginatedResponse,
   Platform,
   Region,
@@ -100,6 +101,8 @@ export const documentariesApi = {
   topRated: () => api.get<DocumentaryListItem[]>('/documentaries/top_rated/'),
 
   recent: () => api.get<DocumentaryListItem[]>('/documentaries/recent/'),
+
+  hero: () => api.get<HeroDocumentary | null>('/documentaries/hero/'),
 
   addToWatchlist: (slug: string) =>
     api.post(`/documentaries/${slug}/add_to_watchlist/`),

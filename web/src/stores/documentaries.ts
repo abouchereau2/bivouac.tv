@@ -5,6 +5,7 @@ import type {
   Documentary,
   DocumentaryFilters,
   DocumentaryListItem,
+  HeroDocumentary,
   Platform,
   Region,
   Sport,
@@ -15,6 +16,7 @@ export const useDocumentariesStore = defineStore('documentaries', () => {
   // State
   const documentaries = ref<DocumentaryListItem[]>([])
   const currentDocumentary = ref<Documentary | null>(null)
+  const heroDocumentary = ref<HeroDocumentary | null>(null)
   const featured = ref<DocumentaryListItem[]>([])
   const topRated = ref<DocumentaryListItem[]>([])
   const recent = ref<DocumentaryListItem[]>([])
@@ -121,6 +123,15 @@ export const useDocumentariesStore = defineStore('documentaries', () => {
     }
   }
 
+  async function fetchHero() {
+    try {
+      const { data } = await documentariesApi.hero()
+      heroDocumentary.value = data
+    } catch {
+      // Silently fail for hero
+    }
+  }
+
   async function fetchTaxonomy() {
     try {
       const [sportsRes, themesRes, regionsRes, platformsRes] = await Promise.all([
@@ -172,6 +183,7 @@ export const useDocumentariesStore = defineStore('documentaries', () => {
     // State
     documentaries,
     currentDocumentary,
+    heroDocumentary,
     featured,
     topRated,
     recent,
@@ -193,6 +205,7 @@ export const useDocumentariesStore = defineStore('documentaries', () => {
     fetchFeatured,
     fetchTopRated,
     fetchRecent,
+    fetchHero,
     fetchTaxonomy,
     toggleWatchlist,
   }

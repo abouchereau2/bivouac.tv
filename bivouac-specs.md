@@ -404,7 +404,7 @@ uv run python manage.py autotag_ai --api-key $ANTHROPIC_API_KEY
 
 ### Sprint 5: Data & Polish 🔜 UPCOMING
 - [ ] **Better tagging** - Auto-detect sports/themes from TMDB keywords
-- [ ] **Homepage hero** - JustWatch-style backdrop with featured doc
+- [X] **Homepage hero** - JustWatch-style backdrop with featured doc
 - [ ] Mobile responsive polish
 - [ ] Performance optimization
 - [ ] Error handling & loading states
@@ -426,7 +426,7 @@ uv run python manage.py autotag_ai --api-key $ANTHROPIC_API_KEY
 | ~~Reviews UI~~ | Show reviews + rating form on doc detail | ✅ Done |
 | ~~Ratings UI~~ | Star rating component on doc detail | ✅ Done |
 | ~~Auto-tagging~~ | Parse TMDB keywords → sports/themes | ✅ Done |
-| Hero section | Full-bleed backdrop like JustWatch | 🟡 To build |
+| Hero section | Full-bleed backdrop like JustWatch | ✅ Done |
 | Availability data | Where to watch links (need data) | 🟡 Need data |
 
 ### Priority 3: Enhancements
@@ -454,10 +454,11 @@ whats next:
   - show user badges next to their profile (in reviews, etc)
 - users public watchlist:
   - add a full list creation/visualization made by users for public use
+- we have add to watchlist, we need know : Seen
 - when user commits some changes, add a system of admin queue validation (me), only the validation gives the user badges
 - enhance homepage, like justwatch, with "sliders" of movies based on popular themes, like 'popular', 'survival', 'mountain', etc...
 - put all the filters on the footer
-- make the website fr / eng trad
+- make the website fr / eng trad | ✅ Done |
 - from detailed doc view, make the directors name clickable, and filter docs
 - add public API
 

@@ -103,6 +103,26 @@ class DocumentaryListSerializer(serializers.ModelSerializer):
         return False
 
 
+class DocumentaryHeroSerializer(serializers.ModelSerializer):
+    """Serializer for hero section (backdrop + synopsis + minimal metadata)."""
+
+    sports = SportSerializer(many=True, read_only=True)
+    synopsis = serializers.SerializerMethodField()
+    average_rating = serializers.ReadOnlyField()
+
+    class Meta:
+        model = Documentary
+        fields = [
+            "id", "title", "slug", "year", "duration_minutes",
+            "synopsis", "backdrop", "poster", "sports", "average_rating"
+        ]
+
+    def get_synopsis(self, obj):
+        """Return synopsis based on request language preference."""
+        lang = get_request_language(self.context)
+        return obj.get_synopsis(lang)
+
+
 class DocumentaryDetailSerializer(serializers.ModelSerializer):
     """Serializer for documentary detail view (full data)."""
 

@@ -58,6 +58,19 @@ export interface DocumentaryListItem {
   is_in_watchlist: boolean
 }
 
+export interface HeroDocumentary {
+  id: number
+  title: string
+  slug: string
+  year: number
+  duration_minutes: number
+  synopsis: string
+  backdrop?: string
+  poster?: string
+  sports: Sport[]
+  average_rating?: number
+}
+
 export interface Documentary extends DocumentaryListItem {
   original_title?: string
   synopsis: string

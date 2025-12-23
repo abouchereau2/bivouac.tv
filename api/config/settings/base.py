@@ -53,6 +53,7 @@ THIRD_PARTY_APPS = [
     "rest_framework_simplejwt.token_blacklist",
     "corsheaders",
     "django_filters",
+    "drf_spectacular",
     # Authentication
     "allauth",
     "allauth.account",
@@ -206,6 +207,27 @@ REST_FRAMEWORK = {
         "anon": "100/hour",
         "user": "1000/hour",
     },
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+
+# =============================================================================
+# DRF Spectacular (OpenAPI/Swagger)
+# =============================================================================
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Bivouac.tv API",
+    "DESCRIPTION": "The basecamp for adventure, nature & extreme sports documentaries",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "COMPONENT_SPLIT_REQUEST": True,
+    "TAGS": [
+        {"name": "Documentaries", "description": "Browse and search documentaries"},
+        {"name": "Reviews", "description": "User ratings and reviews"},
+        {"name": "Submissions", "description": "Submit new documentaries"},
+        {"name": "Users", "description": "User profiles and preferences"},
+        {"name": "Auth", "description": "Authentication endpoints"},
+    ],
 }
 
 
@@ -251,3 +273,11 @@ ACCOUNT_UNIQUE_EMAIL = True
 
 CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=[])
 CORS_ALLOW_CREDENTIALS = True
+
+
+# =============================================================================
+# TMDB API (The Movie Database)
+# Get your free API key at: https://www.themoviedb.org/settings/api
+# =============================================================================
+
+TMDB_API_KEY = env("TMDB_API_KEY", default="")

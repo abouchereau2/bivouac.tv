@@ -1,0 +1,199 @@
+<script setup lang="ts">
+import { ref, onMounted, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useDocumentariesStore } from '@/stores/documentaries'
+import { Search, SlidersHorizontal, X } from 'lucide-vue-next'
+import DocCard from '@/components/docs/DocCard.vue'
+import type { DocumentaryFilters } from '@/types'
+
+const route = useRoute()
+const router = useRouter()
+const docStore = useDocumentariesStore()
+
+const showFilters = ref(false)
+const searchQuery = ref('')
+const filters = ref<DocumentaryFilters>({})
+
+function parseQueryParams() {
+  const query = route.query
+  filters.value = {
+    search: query.search as string,
+    sport: query.sport as string,
+    theme: query.theme as string,
+    region: query.region as string,
+    platform: query.platform as string,
+    is_free: query.is_free === 'true',
+    is_featured: query.is_featured === 'true',
+    ordering: (query.ordering as string) || '-year',
+  }
+  searchQuery.value = filters.value.search || ''
+}
+
+async function applyFilters() {
+  const query: Record<string, string> = {}
+  if (searchQuery.value) query.search = searchQuery.value
+  if (filters.value.sport) query.sport = filters.value.sport
+  if (filters.value.theme) query.theme = filters.value.theme
+  if (filters.value.region) query.region = filters.value.region
+  if (filters.value.platform) query.platform = filters.value.platform
+  if (filters.value.is_free) query.is_free = 'true'
+  if (filters.value.ordering) query.ordering = filters.value.ordering
+
+  await router.push({ query })
+}
+
+function clearFilters() {
+  searchQuery.value = ''
+  filters.value = { ordering: '-year' }
+  router.push({ query: {} })
+}
+
+onMounted(() => {
+  parseQueryParams()
+  docStore.fetchDocumentaries(filters.value)
+})
+
+watch(() => route.query, () => {
+  parseQueryParams()
+  docStore.fetchDocumentaries(filters.value)
+})
+</script>
+
+<template>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+      <h1 class="text-3xl font-bold text-slate-900 dark:text-white">
+        Browse Documentaries
+      </h1>
+
+      <!-- Search -->
+      <div class="flex gap-2">
+        <div class="relative flex-1 md:w-80">
+          <Search class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+          <input
+            v-model="searchQuery"
+            @keyup.enter="applyFilters"
+            type="text"
+            placeholder="Search documentaries..."
+            class="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+        <button
+          @click="showFilters = !showFilters"
+          class="p-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700"
+        >
+          <SlidersHorizontal class="w-5 h-5 text-slate-600 dark:text-slate-300" />
+        </button>
+      </div>
+    </div>
+
+    <!-- Filters Panel -->
+    <div v-if="showFilters" class="bg-white dark:bg-slate-800 rounded-lg p-4 mb-8 border border-slate-200 dark:border-slate-700">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <!-- Sport filter -->
+        <div>
+          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Sport</label>
+          <select
+            v-model="filters.sport"
+            class="w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg"
+          >
+            <option value="">All Sports</option>
+            <option v-for="sport in docStore.sports" :key="sport.id" :value="sport.slug">
+              {{ sport.name }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Platform filter -->
+        <div>
+          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Platform</label>
+          <select
+            v-model="filters.platform"
+            class="w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg"
+          >
+            <option value="">All Platforms</option>
+            <option v-for="platform in docStore.platforms" :key="platform.id" :value="platform.slug">
+              {{ platform.name }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Region filter -->
+        <div>
+          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Region</label>
+          <select
+            v-model="filters.region"
+            class="w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg"
+          >
+            <option value="">All Regions</option>
+            <option v-for="region in docStore.regions" :key="region.id" :value="region.slug">
+              {{ region.name }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Sort -->
+        <div>
+          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Sort by</label>
+          <select
+            v-model="filters.ordering"
+            class="w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg"
+          >
+            <option value="-year">Newest First</option>
+            <option value="year">Oldest First</option>
+            <option value="-created_at">Recently Added</option>
+            <option value="title">Title A-Z</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-4 mt-4">
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input type="checkbox" v-model="filters.is_free" class="rounded" />
+          <span class="text-sm text-slate-700 dark:text-slate-300">Free to watch</span>
+        </label>
+
+        <div class="flex-1"></div>
+
+        <button
+          @click="clearFilters"
+          class="text-sm text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 flex items-center gap-1"
+        >
+          <X class="w-4 h-4" />
+          Clear filters
+        </button>
+
+        <button
+          @click="applyFilters"
+          class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+        >
+          Apply Filters
+        </button>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div v-if="docStore.loading" class="text-center py-12">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+    </div>
+
+    <div v-else-if="docStore.documentaries.length === 0" class="text-center py-12">
+      <p class="text-slate-500 dark:text-slate-400">No documentaries found matching your criteria.</p>
+    </div>
+
+    <div v-else>
+      <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">
+        {{ docStore.totalCount }} documentaries found
+      </p>
+
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+        <DocCard
+          v-for="doc in docStore.documentaries"
+          :key="doc.id"
+          :documentary="doc"
+        />
+      </div>
+    </div>
+  </div>
+</template>

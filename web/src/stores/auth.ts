@@ -1,0 +1,89 @@
+import { defineStore } from 'pinia'
+import { ref, computed } from 'vue'
+import { authApi } from '@/services/api'
+import type { User } from '@/types'
+
+export const useAuthStore = defineStore('auth', () => {
+  const user = ref<User | null>(null)
+  const loading = ref(false)
+  const error = ref<string | null>(null)
+
+  const isAuthenticated = computed(() => !!user.value)
+
+  async function login(email: string, password: string) {
+    loading.value = true
+    error.value = null
+
+    try {
+      const { data } = await authApi.login(email, password)
+      localStorage.setItem('access_token', data.access)
+      localStorage.setItem('refresh_token', data.refresh)
+      await fetchUser()
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Login failed'
+      error.value = message
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
+  async function register(email: string, password1: string, password2: string) {
+    loading.value = true
+    error.value = null
+
+    try {
+      await authApi.register(email, password1, password2)
+      await login(email, password1)
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Registration failed'
+      error.value = message
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
+  async function logout() {
+    try {
+      await authApi.logout()
+    } finally {
+      user.value = null
+      localStorage.removeItem('access_token')
+      localStorage.removeItem('refresh_token')
+    }
+  }
+
+  async function fetchUser() {
+    const token = localStorage.getItem('access_token')
+    if (!token) {
+      user.value = null
+      return
+    }
+
+    try {
+      const { data } = await authApi.getUser()
+      user.value = data
+    } catch {
+      user.value = null
+      localStorage.removeItem('access_token')
+      localStorage.removeItem('refresh_token')
+    }
+  }
+
+  async function initialize() {
+    await fetchUser()
+  }
+
+  return {
+    user,
+    loading,
+    error,
+    isAuthenticated,
+    login,
+    register,
+    logout,
+    fetchUser,
+    initialize,
+  }
+})

@@ -24,6 +24,7 @@
     "submit": "Submit a documentary",
     "profile": "Profile",
     "watchlist": "My Watchlist",
+    "watched": "Already Watched",
     "login": "Login",
     "signup": "Sign Up",
     "logout": "Logout"
@@ -85,6 +86,9 @@
     "inWatchlist": "In Watchlist",
     "addToWatchlist": "Add to Watchlist",
     "removeFromWatchlist": "Remove from watchlist",
+    "watched": "Watched",
+    "markAsWatched": "Mark as Watched",
+    "markAsUnwatched": "Mark as unwatched",
     "whereToWatch": "Where to Watch",
     "noStreaming": "No streaming information available yet.",
     "helpStreaming": "Know where to watch this documentary? Help us by submitting a link!",
@@ -146,6 +150,12 @@
     "title": "My Watchlist",
     "empty": "Your watchlist is empty",
     "emptyDescription": "Start adding documentaries you want to watch later.",
+    "browseButton": "Browse documentaries"
+  },
+  "watched": {
+    "title": "Already Watched",
+    "empty": "You haven't marked any documentaries as watched yet",
+    "emptyDescription": "Mark documentaries you've already seen to keep track of your viewing history.",
     "browseButton": "Browse documentaries"
   },
   "submit": {

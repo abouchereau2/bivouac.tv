@@ -13,6 +13,7 @@ import type {
   Submission,
   Theme,
   User,
+  WatchedItem,
   WatchlistItem,
 } from '@/types'
 
@@ -109,6 +110,12 @@ export const documentariesApi = {
 
   removeFromWatchlist: (slug: string) =>
     api.delete(`/documentaries/${slug}/remove_from_watchlist/`),
+
+  markAsWatched: (slug: string) =>
+    api.post(`/documentaries/${slug}/mark_as_watched/`),
+
+  removeFromWatched: (slug: string) =>
+    api.delete(`/documentaries/${slug}/remove_from_watched/`),
 }
 
 // Taxonomy API
@@ -125,6 +132,14 @@ export const watchlistApi = {
   add: (documentaryId: number) =>
     api.post('/documentaries/watchlist/', { documentary: documentaryId }),
   remove: (id: number) => api.delete(`/documentaries/watchlist/${id}/`),
+}
+
+// Watched API
+export const watchedApi = {
+  list: () => api.get<PaginatedResponse<WatchedItem>>('/documentaries/watched/'),
+  add: (documentaryId: number) =>
+    api.post('/documentaries/watched/', { documentary: documentaryId }),
+  remove: (id: number) => api.delete(`/documentaries/watched/${id}/`),
 }
 
 // Reviews API

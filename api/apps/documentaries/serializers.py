@@ -8,6 +8,7 @@ from .models import (
     Region,
     Sport,
     Theme,
+    Watched,
     Watchlist,
 )
 
@@ -85,19 +86,28 @@ class DocumentaryListSerializer(serializers.ModelSerializer):
     average_rating = serializers.ReadOnlyField()
     review_count = serializers.ReadOnlyField()
     is_in_watchlist = serializers.SerializerMethodField()
+    is_watched = serializers.SerializerMethodField()
 
     class Meta:
         model = Documentary
         fields = [
             "id", "title", "slug", "year", "duration_minutes",
             "poster", "sports", "average_rating", "review_count",
-            "is_in_watchlist"
+            "is_in_watchlist", "is_watched"
         ]
 
     def get_is_in_watchlist(self, obj):
         request = self.context.get("request")
         if request and request.user.is_authenticated:
             return Watchlist.objects.filter(
+                user=request.user, documentary=obj
+            ).exists()
+        return False
+
+    def get_is_watched(self, obj):
+        request = self.context.get("request")
+        if request and request.user.is_authenticated:
+            return Watched.objects.filter(
                 user=request.user, documentary=obj
             ).exists()
         return False
@@ -134,6 +144,7 @@ class DocumentaryDetailSerializer(serializers.ModelSerializer):
     average_rating = serializers.ReadOnlyField()
     review_count = serializers.ReadOnlyField()
     is_in_watchlist = serializers.SerializerMethodField()
+    is_watched = serializers.SerializerMethodField()
     synopsis = serializers.SerializerMethodField()
 
     class Meta:
@@ -144,7 +155,7 @@ class DocumentaryDetailSerializer(serializers.ModelSerializer):
             "directors", "sports", "themes", "regions",
             "imdb_id", "imdb_rating", "tmdb_id",
             "availabilities", "average_rating", "review_count",
-            "is_in_watchlist", "created_at", "updated_at"
+            "is_in_watchlist", "is_watched", "created_at", "updated_at"
         ]
 
     def get_synopsis(self, obj):
@@ -156,6 +167,14 @@ class DocumentaryDetailSerializer(serializers.ModelSerializer):
         request = self.context.get("request")
         if request and request.user.is_authenticated:
             return Watchlist.objects.filter(
+                user=request.user, documentary=obj
+            ).exists()
+        return False
+
+    def get_is_watched(self, obj):
+        request = self.context.get("request")
+        if request and request.user.is_authenticated:
+            return Watched.objects.filter(
                 user=request.user, documentary=obj
             ).exists()
         return False
@@ -172,6 +191,24 @@ class WatchlistSerializer(serializers.ModelSerializer):
 class WatchlistCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Watchlist
+        fields = ["documentary"]
+
+    def create(self, validated_data):
+        validated_data["user"] = self.context["request"].user
+        return super().create(validated_data)
+
+
+class WatchedSerializer(serializers.ModelSerializer):
+    documentary = DocumentaryListSerializer(read_only=True)
+
+    class Meta:
+        model = Watched
+        fields = ["id", "documentary", "watched_at"]
+
+
+class WatchedCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Watched
         fields = ["documentary"]
 
     def create(self, validated_data):

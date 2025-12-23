@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
-import { Mountain, Search, User, LogOut, Plus, Bookmark, Globe } from 'lucide-vue-next'
+import { Mountain, Search, User, LogOut, Plus, Bookmark, Eye, Globe } from 'lucide-vue-next'
 import { setLocale, SUPPORTED_LOCALES, type SupportedLocale } from '@/i18n'
 
 const { t, locale } = useI18n()
@@ -96,6 +96,14 @@ async function handleLogout() {
           <!-- Authenticated user menu -->
           <template v-if="isAuthenticated">
             <RouterLink
+              :to="localePath('/watched')"
+              class="p-2 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors"
+              :title="t('nav.watched')"
+            >
+              <Eye class="w-5 h-5" />
+            </RouterLink>
+
+            <RouterLink
               :to="localePath('/watchlist')"
               class="p-2 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors"
               :title="t('nav.watchlist')"
@@ -130,6 +138,12 @@ async function handleLogout() {
                   class="block px-4 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
                 >
                   {{ t('nav.watchlist') }}
+                </RouterLink>
+                <RouterLink
+                  :to="localePath('/watched')"
+                  class="block px-4 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
+                >
+                  {{ t('nav.watched') }}
                 </RouterLink>
                 <button
                   @click="handleLogout"

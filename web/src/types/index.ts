@@ -56,6 +56,7 @@ export interface DocumentaryListItem {
   average_rating?: number
   review_count: number
   is_in_watchlist: boolean
+  is_watched: boolean
 }
 
 export interface HeroDocumentary {
@@ -139,6 +140,12 @@ export interface WatchlistItem {
   id: number
   documentary: DocumentaryListItem
   added_at: string
+}
+
+export interface WatchedItem {
+  id: number
+  documentary: DocumentaryListItem
+  watched_at: string
 }
 
 // API Response types

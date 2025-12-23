@@ -24,6 +24,7 @@
     "submit": "Proposer un documentaire",
     "profile": "Profil",
     "watchlist": "Ma Liste",
+    "watched": "Déjà vus",
     "login": "Connexion",
     "signup": "Inscription",
     "logout": "Déconnexion"
@@ -85,6 +86,9 @@
     "inWatchlist": "Dans ma liste",
     "addToWatchlist": "Ajouter à ma liste",
     "removeFromWatchlist": "Retirer de ma liste",
+    "watched": "Vu",
+    "markAsWatched": "Marquer comme vu",
+    "markAsUnwatched": "Marquer comme non vu",
     "whereToWatch": "Où regarder",
     "noStreaming": "Aucune information de diffusion disponible.",
     "helpStreaming": "Vous savez où regarder ce documentaire ? Aidez-nous en proposant un lien !",
@@ -146,6 +150,12 @@
     "title": "Ma Liste",
     "empty": "Votre liste est vide",
     "emptyDescription": "Commencez à ajouter des documentaires à regarder plus tard.",
+    "browseButton": "Explorer les documentaires"
+  },
+  "watched": {
+    "title": "Déjà vus",
+    "empty": "Vous n'avez encore marqué aucun documentaire comme vu",
+    "emptyDescription": "Marquez les documentaires que vous avez déjà vus pour garder une trace de votre historique.",
     "browseButton": "Explorer les documentaires"
   },
   "submit": {

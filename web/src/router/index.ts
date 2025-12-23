@@ -45,6 +45,12 @@ const appRoutes = [
     meta: { requiresAuth: true },
   },
   {
+    path: 'watched',
+    name: 'watched',
+    component: () => import('@/pages/Watched.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
     path: 'submit',
     name: 'submit',
     component: () => import('@/pages/Submit.vue'),

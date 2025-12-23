@@ -179,6 +179,36 @@ export const useDocumentariesStore = defineStore('documentaries', () => {
     }
   }
 
+  async function toggleWatched(slug: string, isWatched: boolean) {
+    try {
+      if (isWatched) {
+        await documentariesApi.removeFromWatched(slug)
+      } else {
+        await documentariesApi.markAsWatched(slug)
+      }
+
+      // Update local state
+      const updateItem = (item: DocumentaryListItem) => {
+        if (item.slug === slug) {
+          item.is_watched = !isWatched
+        }
+        return item
+      }
+
+      documentaries.value = documentaries.value.map(updateItem)
+      featured.value = featured.value.map(updateItem)
+      topRated.value = topRated.value.map(updateItem)
+      recent.value = recent.value.map(updateItem)
+
+      if (currentDocumentary.value?.slug === slug) {
+        currentDocumentary.value.is_watched = !isWatched
+      }
+    } catch (err: unknown) {
+      error.value = err instanceof Error ? err.message : 'Failed to update watched status'
+      throw err
+    }
+  }
+
   return {
     // State
     documentaries,
@@ -208,5 +238,6 @@ export const useDocumentariesStore = defineStore('documentaries', () => {
     fetchHero,
     fetchTaxonomy,
     toggleWatchlist,
+    toggleWatched,
   }
 })

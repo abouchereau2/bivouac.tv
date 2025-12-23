@@ -267,3 +267,22 @@ class Watchlist(models.Model):
 
     def __str__(self):
         return f"{self.user.email} - {self.documentary.title}"
+
+
+class Watched(models.Model):
+    """User's watched list - documentaries they have already seen."""
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="watched"
+    )
+    documentary = models.ForeignKey(
+        Documentary, on_delete=models.CASCADE, related_name="watched_by"
+    )
+    watched_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ["user", "documentary"]
+        ordering = ["-watched_at"]
+
+    def __str__(self):
+        return f"{self.user.email} watched {self.documentary.title}"

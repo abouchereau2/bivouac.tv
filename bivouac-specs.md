@@ -454,7 +454,7 @@ whats next:
   - show user badges next to their profile (in reviews, etc)
 - users public watchlist:
   - add a full list creation/visualization made by users for public use
-- we have add to watchlist, we need know : Seen
+- we have 'add to watchlist', we need know 'watched' | ✅ Done |
 - when user commits some changes, add a system of admin queue validation (me), only the validation gives the user badges
 - enhance homepage, like justwatch, with "sliders" of movies based on popular themes, like 'popular', 'survival', 'mountain', etc...
 - put all the filters on the footer

@@ -23,6 +23,14 @@ urlpatterns = [
     path("watchlist/<int:pk>/", views.WatchlistViewSet.as_view({
         "delete": "destroy",
     }), name="watchlist-detail"),
+    # Watched list
+    path("watched/", views.WatchedViewSet.as_view({
+        "get": "list",
+        "post": "create",
+    }), name="watched-list"),
+    path("watched/<int:pk>/", views.WatchedViewSet.as_view({
+        "delete": "destroy",
+    }), name="watched-detail"),
     # Documentary routes (must be last due to slug matching)
     path("", include(router.urls)),
 ]

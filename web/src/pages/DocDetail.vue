@@ -8,7 +8,7 @@ import { reviewsApi } from '@/services/api'
 import { useLocalePath } from '@/composables/useLocalePath'
 import {
   Star, Clock, Calendar, Play, ExternalLink,
-  Bookmark, BookmarkCheck, MapPin
+  Bookmark, BookmarkCheck, MapPin, Eye, EyeOff
 } from 'lucide-vue-next'
 import ReviewForm from '@/components/docs/ReviewForm.vue'
 import ReviewList from '@/components/docs/ReviewList.vue'
@@ -47,6 +47,11 @@ const formatDuration = computed(() => {
 async function toggleWatchlist() {
   if (!doc.value || !authStore.isAuthenticated) return
   await docStore.toggleWatchlist(doc.value.slug, doc.value.is_in_watchlist)
+}
+
+async function toggleWatched() {
+  if (!doc.value || !authStore.isAuthenticated) return
+  await docStore.toggleWatched(doc.value.slug, doc.value.is_watched)
 }
 
 async function fetchReviews() {
@@ -151,6 +156,17 @@ onMounted(() => {
               <Play class="w-4 h-4" />
               {{ t('doc.watchTrailer') }}
             </a>
+
+            <button
+              v-if="authStore.isAuthenticated"
+              @click="toggleWatched"
+              class="inline-flex items-center gap-2 px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-600"
+              :class="{ 'bg-green-600 hover:bg-green-700': doc.is_watched }"
+            >
+              <Eye v-if="doc.is_watched" class="w-4 h-4" />
+              <EyeOff v-else class="w-4 h-4" />
+              {{ doc.is_watched ? t('doc.watched') : t('doc.markAsWatched') }}
+            </button>
 
             <button
               v-if="authStore.isAuthenticated"

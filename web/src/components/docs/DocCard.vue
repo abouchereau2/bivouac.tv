@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { Star, Clock, Bookmark, BookmarkCheck } from 'lucide-vue-next'
+import { Star, Clock, Bookmark, BookmarkCheck, Eye, EyeOff } from 'lucide-vue-next'
 import { useAuthStore } from '@/stores/auth'
 import { useDocumentariesStore } from '@/stores/documentaries'
 import { useLocalePath } from '@/composables/useLocalePath'
@@ -32,6 +32,14 @@ async function toggleWatchlist() {
   await docStore.toggleWatchlist(
     props.documentary.slug,
     props.documentary.is_in_watchlist
+  )
+}
+
+async function toggleWatched() {
+  if (!authStore.isAuthenticated) return
+  await docStore.toggleWatched(
+    props.documentary.slug,
+    props.documentary.is_watched
   )
 }
 </script>
@@ -91,15 +99,27 @@ async function toggleWatchlist() {
       </div>
     </RouterLink>
 
-    <!-- Watchlist button -->
-    <button
-      v-if="authStore.isAuthenticated"
-      @click.prevent="toggleWatchlist"
-      class="absolute top-2 right-2 p-2 bg-black/50 backdrop-blur rounded-full text-white hover:bg-black/70 transition-colors"
-      :title="documentary.is_in_watchlist ? t('doc.removeFromWatchlist') : t('doc.addToWatchlist')"
-    >
-      <BookmarkCheck v-if="documentary.is_in_watchlist" class="w-4 h-4" />
-      <Bookmark v-else class="w-4 h-4" />
-    </button>
+    <!-- Action buttons -->
+    <div v-if="authStore.isAuthenticated" class="absolute top-2 right-2 flex gap-1">
+      <!-- Watched button -->
+      <button
+        @click.prevent="toggleWatched"
+        class="p-2 bg-black/50 backdrop-blur rounded-full text-white hover:bg-black/70 transition-colors"
+        :class="{ 'text-green-400': documentary.is_watched }"
+        :title="documentary.is_watched ? t('doc.markAsUnwatched') : t('doc.markAsWatched')"
+      >
+        <Eye v-if="documentary.is_watched" class="w-4 h-4" />
+        <EyeOff v-else class="w-4 h-4" />
+      </button>
+      <!-- Watchlist button -->
+      <button
+        @click.prevent="toggleWatchlist"
+        class="p-2 bg-black/50 backdrop-blur rounded-full text-white hover:bg-black/70 transition-colors"
+        :title="documentary.is_in_watchlist ? t('doc.removeFromWatchlist') : t('doc.addToWatchlist')"
+      >
+        <BookmarkCheck v-if="documentary.is_in_watchlist" class="w-4 h-4" />
+        <Bookmark v-else class="w-4 h-4" />
+      </button>
+    </div>
   </div>
 </template>

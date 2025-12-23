@@ -11,6 +11,7 @@ from .models import (
     Region,
     Sport,
     Theme,
+    Watched,
     Watchlist,
 )
 from .serializers import (
@@ -22,6 +23,8 @@ from .serializers import (
     RegionSerializer,
     SportSerializer,
     ThemeSerializer,
+    WatchedCreateSerializer,
+    WatchedSerializer,
     WatchlistCreateSerializer,
     WatchlistSerializer,
 )
@@ -142,6 +145,28 @@ class DocumentaryViewSet(viewsets.ReadOnlyModelViewSet):
             return Response({"status": "removed"}, status=status.HTTP_200_OK)
         return Response({"status": "not in watchlist"}, status=status.HTTP_404_NOT_FOUND)
 
+    @action(detail=True, methods=["post"], permission_classes=[permissions.IsAuthenticated])
+    def mark_as_watched(self, request, slug=None):
+        """Mark documentary as watched by user."""
+        documentary = self.get_object()
+        watched, created = Watched.objects.get_or_create(
+            user=request.user, documentary=documentary
+        )
+        if created:
+            return Response({"status": "marked as watched"}, status=status.HTTP_201_CREATED)
+        return Response({"status": "already marked as watched"}, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=["delete"], permission_classes=[permissions.IsAuthenticated])
+    def remove_from_watched(self, request, slug=None):
+        """Remove documentary from user's watched list."""
+        documentary = self.get_object()
+        deleted, _ = Watched.objects.filter(
+            user=request.user, documentary=documentary
+        ).delete()
+        if deleted:
+            return Response({"status": "removed"}, status=status.HTTP_200_OK)
+        return Response({"status": "not in watched list"}, status=status.HTTP_404_NOT_FOUND)
+
 
 class WatchlistViewSet(viewsets.ModelViewSet):
     """ViewSet for user's watchlist."""
@@ -157,6 +182,22 @@ class WatchlistViewSet(viewsets.ModelViewSet):
         if self.action == "create":
             return WatchlistCreateSerializer
         return WatchlistSerializer
+
+
+class WatchedViewSet(viewsets.ModelViewSet):
+    """ViewSet for user's watched list."""
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Watched.objects.filter(user=self.request.user).select_related(
+            "documentary"
+        ).prefetch_related("documentary__sports")
+
+    def get_serializer_class(self):
+        if self.action == "create":
+            return WatchedCreateSerializer
+        return WatchedSerializer
 
 
 class SportListView(generics.ListAPIView):

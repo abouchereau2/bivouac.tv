@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useDocumentariesStore } from '@/stores/documentaries'
-import { Search, SlidersHorizontal, X } from 'lucide-vue-next'
+import { Search, SlidersHorizontal, X, Loader2 } from 'lucide-vue-next'
 import DocCard from '@/components/docs/DocCard.vue'
 import type { DocumentaryFilters } from '@/types'
 
@@ -13,6 +13,8 @@ const docStore = useDocumentariesStore()
 const showFilters = ref(false)
 const searchQuery = ref('')
 const filters = ref<DocumentaryFilters>({})
+const loadMoreTrigger = ref<HTMLElement | null>(null)
+let observer: IntersectionObserver | null = null
 
 function parseQueryParams() {
   const query = route.query
@@ -22,8 +24,8 @@ function parseQueryParams() {
     theme: query.theme as string,
     region: query.region as string,
     platform: query.platform as string,
-    is_free: query.is_free === 'true',
-    is_featured: query.is_featured === 'true',
+    is_free: query.is_free === 'true' ? true : undefined,
+    is_featured: query.is_featured === 'true' ? true : undefined,
     ordering: (query.ordering as string) || '-year',
   }
   searchQuery.value = filters.value.search || ''
@@ -48,15 +50,45 @@ function clearFilters() {
   router.push({ query: {} })
 }
 
+function setupIntersectionObserver() {
+  if (observer) observer.disconnect()
+
+  observer = new IntersectionObserver(
+    (entries) => {
+      if (entries[0]?.isIntersecting && docStore.hasNext && !docStore.loadingMore) {
+        docStore.loadMoreDocumentaries()
+      }
+    },
+    { rootMargin: '100px' }
+  )
+
+  if (loadMoreTrigger.value) {
+    observer.observe(loadMoreTrigger.value)
+  }
+}
+
 onMounted(() => {
   parseQueryParams()
   docStore.fetchDocumentaries(filters.value)
+})
+
+onUnmounted(() => {
+  if (observer) observer.disconnect()
 })
 
 watch(() => route.query, () => {
   parseQueryParams()
   docStore.fetchDocumentaries(filters.value)
 })
+
+watch(
+  () => [docStore.documentaries.length, loadMoreTrigger.value],
+  () => {
+    if (loadMoreTrigger.value) {
+      setupIntersectionObserver()
+    }
+  }
+)
 </script>
 
 <template>
@@ -193,6 +225,20 @@ watch(() => route.query, () => {
           :key="doc.id"
           :documentary="doc"
         />
+      </div>
+
+      <!-- Infinite scroll trigger -->
+      <div
+        ref="loadMoreTrigger"
+        class="flex justify-center py-8"
+      >
+        <div v-if="docStore.loadingMore" class="flex items-center gap-2 text-slate-500">
+          <Loader2 class="w-5 h-5 animate-spin" />
+          <span>Loading more...</span>
+        </div>
+        <p v-else-if="!docStore.hasNext && docStore.documentaries.length > 0" class="text-slate-400 text-sm">
+          You've reached the end
+        </p>
       </div>
     </div>
   </div>

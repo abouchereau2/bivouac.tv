@@ -14,6 +14,13 @@ const authStore = useAuthStore()
 
 const doc = computed(() => docStore.currentDocumentary)
 
+const hasRealBackdrop = computed(() => !!doc.value?.backdrop)
+
+const backdropImage = computed(() => {
+  if (!doc.value) return null
+  return doc.value.backdrop || doc.value.poster
+})
+
 const formatDuration = computed(() => {
   if (!doc.value) return ''
   const hours = Math.floor(doc.value.duration_minutes / 60)
@@ -39,12 +46,15 @@ onMounted(() => {
 
   <div v-else-if="doc">
     <!-- Backdrop -->
-    <div class="relative h-[40vh] md:h-[50vh] bg-slate-900">
+    <div class="relative h-[40vh] md:h-[50vh] bg-slate-900 overflow-hidden">
       <img
-        v-if="doc.backdrop"
-        :src="doc.backdrop"
+        v-if="backdropImage"
+        :src="backdropImage"
         :alt="doc.title"
-        class="w-full h-full object-cover opacity-50"
+        class="w-full h-full object-cover"
+        :class="[
+          hasRealBackdrop ? 'opacity-50' : 'opacity-40 blur-xl scale-105'
+        ]"
       />
       <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/50 to-transparent"></div>
     </div>
@@ -160,9 +170,9 @@ onMounted(() => {
       </div>
 
       <!-- Where to Watch -->
-      <section v-if="doc.availabilities.length" class="mt-12">
+      <section class="mt-12">
         <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-6">Where to Watch</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div v-if="doc.availabilities.length" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <a
             v-for="availability in doc.availabilities"
             :key="availability.id"
@@ -186,6 +196,14 @@ onMounted(() => {
             </div>
             <ExternalLink class="w-5 h-5 text-slate-400" />
           </a>
+        </div>
+        <div v-else class="p-6 bg-slate-100 dark:bg-slate-800 rounded-lg text-center">
+          <p class="text-slate-600 dark:text-slate-400 mb-2">
+            No streaming information available yet.
+          </p>
+          <p class="text-sm text-slate-500 dark:text-slate-500">
+            Know where to watch this documentary? Help us by submitting a link!
+          </p>
         </div>
       </section>
     </div>

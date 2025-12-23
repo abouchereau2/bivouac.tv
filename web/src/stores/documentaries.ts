@@ -27,17 +27,22 @@ export const useDocumentariesStore = defineStore('documentaries', () => {
 
   // Pagination
   const totalCount = ref(0)
+  const currentPage = ref(1)
   const hasNext = ref(false)
   const hasPrevious = ref(false)
+  const currentFilters = ref<DocumentaryFilters>({})
 
   // Loading states
   const loading = ref(false)
+  const loadingMore = ref(false)
   const error = ref<string | null>(null)
 
   // Actions
   async function fetchDocumentaries(filters?: DocumentaryFilters) {
     loading.value = true
     error.value = null
+    currentPage.value = 1
+    currentFilters.value = filters || {}
 
     try {
       const { data } = await documentariesApi.list(filters)
@@ -49,6 +54,29 @@ export const useDocumentariesStore = defineStore('documentaries', () => {
       error.value = err instanceof Error ? err.message : 'Failed to fetch documentaries'
     } finally {
       loading.value = false
+    }
+  }
+
+  async function loadMoreDocumentaries() {
+    if (!hasNext.value || loadingMore.value) return
+
+    loadingMore.value = true
+    error.value = null
+    currentPage.value++
+
+    try {
+      const { data } = await documentariesApi.list({
+        ...currentFilters.value,
+        page: currentPage.value,
+      })
+      documentaries.value = [...documentaries.value, ...data.results]
+      hasNext.value = !!data.next
+      hasPrevious.value = !!data.previous
+    } catch (err: unknown) {
+      error.value = err instanceof Error ? err.message : 'Failed to load more documentaries'
+      currentPage.value--
+    } finally {
+      loadingMore.value = false
     }
   }
 
@@ -155,10 +183,12 @@ export const useDocumentariesStore = defineStore('documentaries', () => {
     hasNext,
     hasPrevious,
     loading,
+    loadingMore,
     error,
 
     // Actions
     fetchDocumentaries,
+    loadMoreDocumentaries,
     fetchDocumentary,
     fetchFeatured,
     fetchTopRated,

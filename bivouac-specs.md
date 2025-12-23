@@ -243,6 +243,37 @@ bivouac-web/
 
 ---
 
+## 📊 Current Data Status (Dec 2024)
+
+| Metric | Count | Notes |
+|--------|-------|-------|
+| **Total Documentaries** | 120 | FIFAV winners 2004-2025 |
+| **Published (visible)** | 76 | Have TMDB metadata |
+| **With Posters** | 67 | Downloaded from TMDB |
+| **With Backdrops** | 42 | Fallback to poster implemented |
+| **Directors** | 137 | Parsed from festival data |
+| **Sports** | 20 | Seeded taxonomy |
+| **Themes** | 18 | Seeded taxonomy |
+| **Regions** | 39 | Seeded taxonomy |
+| **Platforms** | 15 | Seeded (Netflix, Arte, YouTube, etc.) |
+
+### Data Commands
+```bash
+# Import FIFAV festival winners
+uv run python manage.py import_fifav
+
+# Seed sports, themes, regions, platforms
+uv run python manage.py seed_taxonomies
+
+# Enrich with TMDB (posters, synopsis, trailers)
+uv run python manage.py enrich_tmdb
+
+# Download poster images
+uv run python manage.py download_posters
+```
+
+---
+
 ## 🌱 Database Growth Strategy
 
 ### Phase 1: Manual Seeding (Month 1-2)
@@ -319,38 +350,73 @@ bivouac-web/
 
 ## 🚀 Development Roadmap
 
-### Sprint 1: Foundation (Week 1-2)
-- [ ] Django project setup + Docker
-- [ ] Core models (Documentary, Platform, Availability)
-- [ ] Django Admin customization
-- [ ] Vue.js project setup + Tailwind
-- [ ] Basic API endpoints (list, detail, filter)
+### Sprint 1: Foundation ✅ DONE
+- [x] Django project setup with uv
+- [x] Core models (Documentary, Platform, Availability, Sport, Theme, Region, Person)
+- [x] Django Admin customization
+- [x] Vue.js 3 project setup + Tailwind + TypeScript
+- [x] Basic API endpoints (list, detail, filter)
+- [x] FIFAV data import (120 documentaries from 2004-2025)
+- [x] TMDB enrichment pipeline (posters, synopses, trailers)
+- [x] Taxonomy seeding (20 sports, 18 themes, 39 regions, 15 platforms)
 
-### Sprint 2: Core Features (Week 3-4)
-- [ ] Homepage with featured docs
-- [ ] Browse page with filters
-- [ ] Documentary detail page
-- [ ] "Where to watch" component
-- [ ] Search functionality
+### Sprint 2: Core Features ✅ DONE
+- [x] Homepage with featured/top-rated/recent sections
+- [x] Browse page with filters (sport, platform, region, free, sorting)
+- [x] Documentary detail page
+- [x] ~~**FIX: Browse page shows no results**~~ Fixed: `is_free` filter was incorrectly sent as `false`
+- [x] ~~**FIX: Backdrop fallback to poster**~~ Fixed: Blurred poster as ambient background (Netflix-style)
+- [x] "Where to watch" component (shows placeholder when no availability data)
+- [x] Search functionality (full-text search)
+- [x] **Infinite scroll** on Browse page (lazy loading with Intersection Observer)
 
-### Sprint 3: Users (Week 5-6)
-- [ ] User registration/login (email + social)
-- [ ] User profile page
-- [ ] Watchlist functionality
-- [ ] Ratings (1-5 stars)
+### Sprint 3: Users ✅ MOSTLY DONE
+- [x] User registration/login (email)
+- [x] User profile page (read-only)
+- [x] Watchlist functionality (add/remove)
+- [ ] **TODO: Ratings UI** - Backend ready, no frontend form
+- [ ] **TODO: Profile editing**
 
-### Sprint 4: Community (Week 7-8)
-- [ ] Reviews (text)
-- [ ] Doc submission form
-- [ ] Admin moderation queue
+### Sprint 4: Community 🔜 NEXT
+- [ ] **Reviews UI** - Display reviews on doc page + submission form
+- [x] Doc submission form (basic)
+- [ ] Admin moderation queue improvements
 - [ ] Basic SEO (meta tags, sitemap)
 
-### Sprint 5: Polish & Launch (Week 9-10)
-- [ ] Mobile responsive design
+### Sprint 5: Data & Polish 🔜 UPCOMING
+- [ ] **Better tagging** - Auto-detect sports/themes from TMDB keywords
+- [ ] **Homepage hero** - JustWatch-style backdrop with featured doc
+- [ ] Mobile responsive polish
 - [ ] Performance optimization
 - [ ] Error handling & loading states
 - [ ] Analytics setup (Plausible/Umami)
-- [ ] **LAUNCH MVP** 🚀
+
+---
+
+## 🐛 Known Issues & Next Steps
+
+### Priority 1: Critical Fixes ✅ RESOLVED
+| Issue | Description | Status |
+|-------|-------------|--------|
+| ~~Browse shows nothing~~ | Fixed: `is_free=false` filter bug | ✅ Fixed |
+| ~~No backdrop fallback~~ | Fixed: Falls back to poster image | ✅ Fixed |
+
+### Priority 2: Missing Features
+| Feature | Description | Status |
+|---------|-------------|--------|
+| Reviews UI | Show reviews + rating form on doc detail | 🟡 To build |
+| Ratings UI | Star rating component on doc detail | 🟡 To build |
+| Auto-tagging | Parse TMDB keywords → sports/themes | 🟡 To build |
+| Hero section | Full-bleed backdrop like JustWatch | 🟡 To build |
+| Availability data | Where to watch links (need data) | 🟡 Need data |
+
+### Priority 3: Enhancements
+| Feature | Description | Status |
+|---------|-------------|--------|
+| Year/Duration filters | Already in types, expose in UI | 🟢 Easy |
+| Theme filter | Already in types, expose in UI | 🟢 Easy |
+| ~~Pagination~~ | Infinite scroll implemented | ✅ Done |
+| Profile editing | Allow bio/avatar changes | 🟢 Medium |
 
 ---
 

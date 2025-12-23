@@ -6,6 +6,7 @@ import { useDocumentariesStore } from '@/stores/documentaries'
 import { useLocalePath } from '@/composables/useLocalePath'
 import { Search, Play, Star, Mountain, Clock, Info } from 'lucide-vue-next'
 import DocCard from '@/components/docs/DocCard.vue'
+import DocSlider from '@/components/docs/DocSlider.vue'
 
 const { t } = useI18n()
 const { localePath } = useLocalePath()
@@ -28,12 +29,25 @@ const formatDuration = computed(() => {
   return `${minutes}m`
 })
 
+// Themed collections config
+const themedSections = [
+  { key: 'survival', slug: 'survival' },
+  { key: 'environment', slug: 'environment' },
+  { key: 'expedition', slug: 'expedition' },
+]
+
 onMounted(async () => {
+  // Fetch taxonomy first so we can access themes
+  await docStore.fetchTaxonomy()
+
   await Promise.all([
     docStore.fetchHero(),
     docStore.fetchFeatured(),
     docStore.fetchTopRated(),
     docStore.fetchRecent(),
+    docStore.fetchPopular(),
+    // Fetch themed collections
+    ...themedSections.map((section) => docStore.fetchByTheme(section.slug)),
   ])
 })
 </script>
@@ -223,29 +237,44 @@ onMounted(async () => {
       </div>
     </section>
 
-    <!-- Recently Added Section -->
-    <section class="py-16 bg-white dark:bg-slate-900" v-if="docStore.recent.length">
+    <!-- Recently Added Section (index 0 = blue/dark) -->
+    <section class="py-12 bg-white dark:bg-slate-900" v-if="docStore.recent.length">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between mb-8">
-          <h2 class="text-2xl font-bold text-slate-900 dark:text-white">
-            {{ t('home.recentlyAdded') }}
-          </h2>
-          <RouterLink
-            :to="localePath('/browse') + '?ordering=-created_at'"
-            class="text-blue-600 hover:text-blue-700 font-medium"
-          >
-            {{ t('common.viewAll') }}
-          </RouterLink>
-        </div>
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-          <DocCard
-            v-for="doc in docStore.recent"
-            :key="doc.id"
-            :documentary="doc"
-          />
-        </div>
+        <DocSlider
+          :title="t('home.recentlyAdded')"
+          :documentaries="docStore.recent"
+          :view-all-link="localePath('/browse') + '?ordering=-created_at'"
+        />
       </div>
     </section>
+
+    <!-- Popular Section (index 1 = grey) -->
+    <section class="py-12 bg-slate-50 dark:bg-slate-800" v-if="docStore.popular.length">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <DocSlider
+          :title="t('home.popular')"
+          :documentaries="docStore.popular"
+          :view-all-link="localePath('/browse')"
+        />
+      </div>
+    </section>
+
+    <!-- Themed Sliders (index 2, 3, 4... alternating from blue) -->
+    <template v-for="(section, index) in themedSections" :key="section.key">
+      <section
+        v-if="docStore.themedCollections[section.slug]?.length"
+        class="py-12"
+        :class="index % 2 === 0 ? 'bg-white dark:bg-slate-900' : 'bg-slate-50 dark:bg-slate-800'"
+      >
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <DocSlider
+            :title="t(`home.themes.${section.key}`)"
+            :documentaries="docStore.themedCollections[section.slug] ?? []"
+            :view-all-link="localePath('/browse') + `?theme=${section.slug}`"
+          />
+        </div>
+      </section>
+    </template>
 
     <!-- Sports Categories -->
     <section class="py-16 bg-slate-50 dark:bg-slate-800">

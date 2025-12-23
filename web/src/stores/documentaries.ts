@@ -20,6 +20,8 @@ export const useDocumentariesStore = defineStore('documentaries', () => {
   const featured = ref<DocumentaryListItem[]>([])
   const topRated = ref<DocumentaryListItem[]>([])
   const recent = ref<DocumentaryListItem[]>([])
+  const popular = ref<DocumentaryListItem[]>([])
+  const themedCollections = ref<Record<string, DocumentaryListItem[]>>({})
 
   // Taxonomy
   const sports = ref<Sport[]>([])
@@ -123,6 +125,33 @@ export const useDocumentariesStore = defineStore('documentaries', () => {
     }
   }
 
+  async function fetchPopular() {
+    try {
+      const { data } = await documentariesApi.popular()
+      popular.value = data
+    } catch {
+      // Silently fail for popular
+    }
+  }
+
+  async function fetchByTheme(themeSlug: string) {
+    try {
+      const { data } = await documentariesApi.byTheme(themeSlug)
+      themedCollections.value[themeSlug] = data
+    } catch {
+      // Silently fail for themed collection
+    }
+  }
+
+  async function fetchBySport(sportSlug: string) {
+    try {
+      const { data } = await documentariesApi.bySport(sportSlug)
+      themedCollections.value[`sport-${sportSlug}`] = data
+    } catch {
+      // Silently fail for sport collection
+    }
+  }
+
   async function fetchHero() {
     try {
       const { data } = await documentariesApi.hero()
@@ -169,6 +198,13 @@ export const useDocumentariesStore = defineStore('documentaries', () => {
       featured.value = featured.value.map(updateItem)
       topRated.value = topRated.value.map(updateItem)
       recent.value = recent.value.map(updateItem)
+      popular.value = popular.value.map(updateItem)
+      for (const key of Object.keys(themedCollections.value)) {
+        const collection = themedCollections.value[key]
+        if (collection) {
+          themedCollections.value[key] = collection.map(updateItem)
+        }
+      }
 
       if (currentDocumentary.value?.slug === slug) {
         currentDocumentary.value.is_in_watchlist = !isInWatchlist
@@ -199,6 +235,13 @@ export const useDocumentariesStore = defineStore('documentaries', () => {
       featured.value = featured.value.map(updateItem)
       topRated.value = topRated.value.map(updateItem)
       recent.value = recent.value.map(updateItem)
+      popular.value = popular.value.map(updateItem)
+      for (const key of Object.keys(themedCollections.value)) {
+        const collection = themedCollections.value[key]
+        if (collection) {
+          themedCollections.value[key] = collection.map(updateItem)
+        }
+      }
 
       if (currentDocumentary.value?.slug === slug) {
         currentDocumentary.value.is_watched = !isWatched
@@ -217,6 +260,8 @@ export const useDocumentariesStore = defineStore('documentaries', () => {
     featured,
     topRated,
     recent,
+    popular,
+    themedCollections,
     sports,
     themes,
     regions,
@@ -235,6 +280,9 @@ export const useDocumentariesStore = defineStore('documentaries', () => {
     fetchFeatured,
     fetchTopRated,
     fetchRecent,
+    fetchPopular,
+    fetchByTheme,
+    fetchBySport,
     fetchHero,
     fetchTaxonomy,
     toggleWatchlist,

@@ -40,6 +40,12 @@
     "featured": "Documentaires à la une",
     "topRated": "Les mieux notés",
     "recentlyAdded": "Ajouts récents",
+    "popular": "Populaires",
+    "themes": {
+      "survival": "Survie",
+      "environment": "Environnement & Nature",
+      "expedition": "Expéditions"
+    },
     "browseBySport": "Explorer par sport",
     "submitCta": "Vous connaissez un super documentaire ?",
     "submitCtaDescription": "Aidez à enrichir notre collection en proposant des documentaires que vous avez découverts. Partagez l'aventure avec la communauté.",

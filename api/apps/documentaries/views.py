@@ -92,6 +92,59 @@ class DocumentaryViewSet(viewsets.ReadOnlyModelViewSet):
         return Response(serializer.data)
 
     @action(detail=False, methods=["get"])
+    def by_theme(self, request):
+        """Get documentaries filtered by theme slug."""
+        theme_slug = request.query_params.get("theme")
+        if not theme_slug:
+            return Response(
+                {"error": "theme parameter is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        queryset = (
+            self.get_queryset()
+            .filter(themes__slug=theme_slug)
+            .prefetch_related("sports")
+            .order_by("-year")[:10]
+        )
+        serializer = DocumentaryListSerializer(
+            queryset, many=True, context={"request": request}
+        )
+        return Response(serializer.data)
+
+    @action(detail=False, methods=["get"])
+    def by_sport(self, request):
+        """Get documentaries filtered by sport slug."""
+        sport_slug = request.query_params.get("sport")
+        if not sport_slug:
+            return Response(
+                {"error": "sport parameter is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        queryset = (
+            self.get_queryset()
+            .filter(sports__slug=sport_slug)
+            .prefetch_related("sports")
+            .order_by("-year")[:10]
+        )
+        serializer = DocumentaryListSerializer(
+            queryset, many=True, context={"request": request}
+        )
+        return Response(serializer.data)
+
+    @action(detail=False, methods=["get"])
+    def popular(self, request):
+        """Get popular documentaries (most reviewed)."""
+        queryset = (
+            self.get_queryset()
+            .annotate(review_count=Count("reviews"))
+            .order_by("-review_count", "-year")[:10]
+        )
+        serializer = DocumentaryListSerializer(
+            queryset, many=True, context={"request": request}
+        )
+        return Response(serializer.data)
+
+    @action(detail=False, methods=["get"])
     def hero(self, request):
         """Get a random documentary with backdrop for hero section."""
         # Get any documentary that has a backdrop (prefer recent ones)

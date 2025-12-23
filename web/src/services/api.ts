@@ -105,6 +105,14 @@ export const documentariesApi = {
 
   hero: () => api.get<HeroDocumentary | null>('/documentaries/hero/'),
 
+  byTheme: (theme: string) =>
+    api.get<DocumentaryListItem[]>('/documentaries/by_theme/', { params: { theme } }),
+
+  bySport: (sport: string) =>
+    api.get<DocumentaryListItem[]>('/documentaries/by_sport/', { params: { sport } }),
+
+  popular: () => api.get<DocumentaryListItem[]>('/documentaries/popular/'),
+
   addToWatchlist: (slug: string) =>
     api.post(`/documentaries/${slug}/add_to_watchlist/`),
 

@@ -40,6 +40,12 @@
     "featured": "Featured Documentaries",
     "topRated": "Top Rated",
     "recentlyAdded": "Recently Added",
+    "popular": "Popular",
+    "themes": {
+      "survival": "Survival",
+      "environment": "Environment & Nature",
+      "expedition": "Expeditions"
+    },
     "browseBySport": "Browse by Sport",
     "submitCta": "Know a great documentary?",
     "submitCtaDescription": "Help grow our collection by submitting documentaries you've discovered. Share the adventure with the community.",

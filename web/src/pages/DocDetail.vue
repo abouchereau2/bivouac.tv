@@ -1,11 +1,15 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useDocumentariesStore } from '@/stores/documentaries'
 import { useAuthStore } from '@/stores/auth'
+import { reviewsApi } from '@/services/api'
 import {
   Star, Clock, Calendar, Play, ExternalLink,
   Bookmark, BookmarkCheck, MapPin
 } from 'lucide-vue-next'
+import ReviewForm from '@/components/docs/ReviewForm.vue'
+import ReviewList from '@/components/docs/ReviewList.vue'
+import type { Review } from '@/types'
 
 const props = defineProps<{ slug: string }>()
 
@@ -13,6 +17,12 @@ const docStore = useDocumentariesStore()
 const authStore = useAuthStore()
 
 const doc = computed(() => docStore.currentDocumentary)
+
+const reviews = ref<Review[]>([])
+const reviewsLoading = ref(false)
+const userReview = computed(() =>
+  reviews.value.find(r => r.user.id === authStore.user?.id)
+)
 
 const hasRealBackdrop = computed(() => !!doc.value?.backdrop)
 
@@ -34,8 +44,30 @@ async function toggleWatchlist() {
   await docStore.toggleWatchlist(doc.value.slug, doc.value.is_in_watchlist)
 }
 
+async function fetchReviews() {
+  reviewsLoading.value = true
+  try {
+    const { data } = await reviewsApi.list(props.slug)
+    reviews.value = data.results
+  } catch {
+    // Silently fail
+  } finally {
+    reviewsLoading.value = false
+  }
+}
+
+function handleReviewSaved(review: Review) {
+  const existingIndex = reviews.value.findIndex(r => r.id === review.id)
+  if (existingIndex >= 0) {
+    reviews.value[existingIndex] = review
+  } else {
+    reviews.value.unshift(review)
+  }
+}
+
 onMounted(() => {
   docStore.fetchDocumentary(props.slug)
+  fetchReviews()
 })
 </script>
 
@@ -204,6 +236,33 @@ onMounted(() => {
           <p class="text-sm text-slate-500 dark:text-slate-500">
             Know where to watch this documentary? Help us by submitting a link!
           </p>
+        </div>
+      </section>
+
+      <!-- Reviews Section -->
+      <section class="mt-12">
+        <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-6">
+          Reviews
+          <span v-if="reviews.length" class="text-lg font-normal text-slate-500">
+            ({{ reviews.length }})
+          </span>
+        </h2>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <!-- Review Form -->
+          <div class="lg:col-span-1">
+            <ReviewForm
+              v-if="doc"
+              :documentary-id="doc.id"
+              :existing-review="userReview"
+              @review-saved="handleReviewSaved"
+            />
+          </div>
+
+          <!-- Review List -->
+          <div class="lg:col-span-2">
+            <ReviewList :reviews="reviews" :loading="reviewsLoading" />
+          </div>
         </div>
       </section>
     </div>

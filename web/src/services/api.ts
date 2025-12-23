@@ -75,6 +75,9 @@ export const authApi = {
 
   updateUser: (data: Partial<User>) => api.patch<User>('/users/me/', data),
 
+  updateProfile: (data: { bio?: string }) =>
+    api.patch<User['profile']>('/users/me/profile/', data),
+
   refreshToken: (refresh: string) =>
     api.post<AuthTokens>('/auth/token/refresh/', { refresh }),
 }

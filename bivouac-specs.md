@@ -35,6 +35,7 @@
 | **Follow Users** | Follow other adventure doc lovers |
 | **Activity Feed** | See what people are watching/rating |
 | **Comments** | Discuss on doc pages |
+| **Community Tagging** | Users suggest sports/themes/regions, mods approve |
 
 ### Phase 3 — Growth (v2.0)
 
@@ -270,6 +271,24 @@ uv run python manage.py enrich_tmdb
 
 # Download poster images
 uv run python manage.py download_posters
+
+# Auto-tag with sports/themes from TMDB keywords
+uv run python manage.py autotag_tmdb
+```
+
+### Tagging Strategy
+
+| Method | Status | Notes |
+|--------|--------|-------|
+| **Manual tagging** | ✅ Done | Initial 76 docs tagged manually |
+| **TMDB keywords** | ✅ Done | `autotag_tmdb` command (low match rate for niche docs) |
+| **AI-powered tagging** | 🔜 Planned | Claude API command to analyze synopsis/title |
+| **Community tagging** | 🔜 Phase 2 | Users suggest tags, moderators approve |
+
+**Future: AI Auto-Tagging Command**
+```bash
+# Will use Claude API to intelligently tag from synopsis
+uv run python manage.py autotag_ai --api-key $ANTHROPIC_API_KEY
 ```
 
 ---
@@ -370,15 +389,15 @@ uv run python manage.py download_posters
 - [x] Search functionality (full-text search)
 - [x] **Infinite scroll** on Browse page (lazy loading with Intersection Observer)
 
-### Sprint 3: Users ✅ MOSTLY DONE
+### Sprint 3: Users ✅ DONE
 - [x] User registration/login (email)
 - [x] User profile page (read-only)
 - [x] Watchlist functionality (add/remove)
-- [ ] **TODO: Ratings UI** - Backend ready, no frontend form
-- [ ] **TODO: Profile editing**
+- [x] **Ratings & Reviews UI** - Star rating + review form on doc detail page
+- [x] **Profile editing** - Edit username and bio
 
 ### Sprint 4: Community 🔜 NEXT
-- [ ] **Reviews UI** - Display reviews on doc page + submission form
+- [x] **Reviews UI** - Display reviews on doc page + submission form
 - [x] Doc submission form (basic)
 - [ ] Admin moderation queue improvements
 - [ ] Basic SEO (meta tags, sitemap)
@@ -404,19 +423,19 @@ uv run python manage.py download_posters
 ### Priority 2: Missing Features
 | Feature | Description | Status |
 |---------|-------------|--------|
-| Reviews UI | Show reviews + rating form on doc detail | 🟡 To build |
-| Ratings UI | Star rating component on doc detail | 🟡 To build |
-| Auto-tagging | Parse TMDB keywords → sports/themes | 🟡 To build |
+| ~~Reviews UI~~ | Show reviews + rating form on doc detail | ✅ Done |
+| ~~Ratings UI~~ | Star rating component on doc detail | ✅ Done |
+| ~~Auto-tagging~~ | Parse TMDB keywords → sports/themes | ✅ Done |
 | Hero section | Full-bleed backdrop like JustWatch | 🟡 To build |
 | Availability data | Where to watch links (need data) | 🟡 Need data |
 
 ### Priority 3: Enhancements
 | Feature | Description | Status |
 |---------|-------------|--------|
-| Year/Duration filters | Already in types, expose in UI | 🟢 Easy |
-| Theme filter | Already in types, expose in UI | 🟢 Easy |
+| ~~Year/Duration filters~~ | Exposed in Browse UI | ✅ Done |
+| ~~Theme filter~~ | Exposed in Browse UI | ✅ Done |
 | ~~Pagination~~ | Infinite scroll implemented | ✅ Done |
-| Profile editing | Allow bio/avatar changes | 🟢 Medium |
+| ~~Profile editing~~ | Edit username and bio | ✅ Done |
 
 ---
 

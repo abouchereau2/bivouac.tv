@@ -24,6 +24,10 @@ function parseQueryParams() {
     theme: query.theme as string,
     region: query.region as string,
     platform: query.platform as string,
+    year_min: query.year_min ? Number(query.year_min) : undefined,
+    year_max: query.year_max ? Number(query.year_max) : undefined,
+    duration_min: query.duration_min ? Number(query.duration_min) : undefined,
+    duration_max: query.duration_max ? Number(query.duration_max) : undefined,
     is_free: query.is_free === 'true' ? true : undefined,
     is_featured: query.is_featured === 'true' ? true : undefined,
     ordering: (query.ordering as string) || '-year',
@@ -38,6 +42,10 @@ async function applyFilters() {
   if (filters.value.theme) query.theme = filters.value.theme
   if (filters.value.region) query.region = filters.value.region
   if (filters.value.platform) query.platform = filters.value.platform
+  if (filters.value.year_min) query.year_min = String(filters.value.year_min)
+  if (filters.value.year_max) query.year_max = String(filters.value.year_max)
+  if (filters.value.duration_min) query.duration_min = String(filters.value.duration_min)
+  if (filters.value.duration_max) query.duration_max = String(filters.value.duration_max)
   if (filters.value.is_free) query.is_free = 'true'
   if (filters.value.ordering) query.ordering = filters.value.ordering
 
@@ -122,6 +130,7 @@ watch(
 
     <!-- Filters Panel -->
     <div v-if="showFilters" class="bg-white dark:bg-slate-800 rounded-lg p-4 mb-8 border border-slate-200 dark:border-slate-700">
+      <!-- Row 1: Category filters -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <!-- Sport filter -->
         <div>
@@ -137,16 +146,16 @@ watch(
           </select>
         </div>
 
-        <!-- Platform filter -->
+        <!-- Theme filter -->
         <div>
-          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Platform</label>
+          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Theme</label>
           <select
-            v-model="filters.platform"
+            v-model="filters.theme"
             class="w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg"
           >
-            <option value="">All Platforms</option>
-            <option v-for="platform in docStore.platforms" :key="platform.id" :value="platform.slug">
-              {{ platform.name }}
+            <option value="">All Themes</option>
+            <option v-for="theme in docStore.themes" :key="theme.id" :value="theme.slug">
+              {{ theme.name }}
             </option>
           </select>
         </div>
@@ -165,6 +174,69 @@ watch(
           </select>
         </div>
 
+        <!-- Platform filter -->
+        <div>
+          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Platform</label>
+          <select
+            v-model="filters.platform"
+            class="w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg"
+          >
+            <option value="">All Platforms</option>
+            <option v-for="platform in docStore.platforms" :key="platform.id" :value="platform.slug">
+              {{ platform.name }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Row 2: Year, Duration, Sort -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+        <!-- Year range -->
+        <div>
+          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Year</label>
+          <div class="flex gap-2">
+            <input
+              v-model.number="filters.year_min"
+              type="number"
+              placeholder="From"
+              min="1900"
+              max="2100"
+              class="w-full px-2 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-sm"
+            />
+            <input
+              v-model.number="filters.year_max"
+              type="number"
+              placeholder="To"
+              min="1900"
+              max="2100"
+              class="w-full px-2 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-sm"
+            />
+          </div>
+        </div>
+
+        <!-- Duration range -->
+        <div>
+          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Duration (min)</label>
+          <div class="flex gap-2">
+            <input
+              v-model.number="filters.duration_min"
+              type="number"
+              placeholder="Min"
+              min="1"
+              max="600"
+              class="w-full px-2 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-sm"
+            />
+            <input
+              v-model.number="filters.duration_max"
+              type="number"
+              placeholder="Max"
+              min="1"
+              max="600"
+              class="w-full px-2 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-sm"
+            />
+          </div>
+        </div>
+
         <!-- Sort -->
         <div>
           <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Sort by</label>
@@ -176,18 +248,22 @@ watch(
             <option value="year">Oldest First</option>
             <option value="-created_at">Recently Added</option>
             <option value="title">Title A-Z</option>
+            <option value="duration_minutes">Shortest First</option>
+            <option value="-duration_minutes">Longest First</option>
           </select>
+        </div>
+
+        <!-- Free checkbox + spacer -->
+        <div class="flex items-end">
+          <label class="flex items-center gap-2 cursor-pointer pb-2">
+            <input type="checkbox" v-model="filters.is_free" class="rounded" />
+            <span class="text-sm text-slate-700 dark:text-slate-300">Free to watch</span>
+          </label>
         </div>
       </div>
 
-      <div class="flex items-center gap-4 mt-4">
-        <label class="flex items-center gap-2 cursor-pointer">
-          <input type="checkbox" v-model="filters.is_free" class="rounded" />
-          <span class="text-sm text-slate-700 dark:text-slate-300">Free to watch</span>
-        </label>
-
-        <div class="flex-1"></div>
-
+      <!-- Actions row -->
+      <div class="flex items-center justify-end gap-4 mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
         <button
           @click="clearFilters"
           class="text-sm text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 flex items-center gap-1"

@@ -75,6 +75,32 @@ export const useAuthStore = defineStore('auth', () => {
     await fetchUser()
   }
 
+  async function updateProfile(data: { username?: string; bio?: string }) {
+    loading.value = true
+    error.value = null
+
+    try {
+      // Update username on user endpoint if provided
+      if (data.username && data.username !== user.value?.username) {
+        await authApi.updateUser({ username: data.username })
+      }
+
+      // Update bio on profile endpoint if provided
+      if (data.bio !== undefined) {
+        await authApi.updateProfile({ bio: data.bio })
+      }
+
+      // Refresh user data
+      await fetchUser()
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to update profile'
+      error.value = message
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
   return {
     user,
     loading,
@@ -85,5 +111,6 @@ export const useAuthStore = defineStore('auth', () => {
     logout,
     fetchUser,
     initialize,
+    updateProfile,
   }
 })

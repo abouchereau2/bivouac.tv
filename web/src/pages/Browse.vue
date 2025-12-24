@@ -4,12 +4,14 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useDocumentariesStore } from '@/stores/documentaries'
 import { useLocalePath } from '@/composables/useLocalePath'
+import { useLocalizedName } from '@/composables/useLocalizedName'
 import { Search, SlidersHorizontal, X, Loader2 } from 'lucide-vue-next'
 import DocCard from '@/components/docs/DocCard.vue'
 import type { DocumentaryFilters } from '@/types'
 
 const { t } = useI18n()
 const { currentLang } = useLocalePath()
+const { getName } = useLocalizedName()
 const route = useRoute()
 const router = useRouter()
 const docStore = useDocumentariesStore()
@@ -145,7 +147,7 @@ watch(
           >
             <option value="">{{ t('browse.filters.allSports') }}</option>
             <option v-for="sport in docStore.sports" :key="sport.id" :value="sport.slug">
-              {{ sport.name }}
+              {{ getName(sport) }}
             </option>
           </select>
         </div>
@@ -159,7 +161,7 @@ watch(
           >
             <option value="">{{ t('browse.filters.allThemes') }}</option>
             <option v-for="theme in docStore.themes" :key="theme.id" :value="theme.slug">
-              {{ theme.name }}
+              {{ getName(theme) }}
             </option>
           </select>
         </div>
@@ -173,7 +175,7 @@ watch(
           >
             <option value="">{{ t('browse.filters.allRegions') }}</option>
             <option v-for="region in docStore.regions" :key="region.id" :value="region.slug">
-              {{ region.name }}
+              {{ getName(region) }}
             </option>
           </select>
         </div>

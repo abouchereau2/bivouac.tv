@@ -4,12 +4,14 @@ import { RouterLink } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useDocumentariesStore } from '@/stores/documentaries'
 import { useLocalePath } from '@/composables/useLocalePath'
+import { useLocalizedName } from '@/composables/useLocalizedName'
 import { Search, Play, Star, Mountain, Clock, Info } from 'lucide-vue-next'
 import DocCard from '@/components/docs/DocCard.vue'
 import DocSlider from '@/components/docs/DocSlider.vue'
 
 const { t } = useI18n()
 const { localePath } = useLocalePath()
+const { getName } = useLocalizedName()
 const docStore = useDocumentariesStore()
 
 const hero = computed(() => docStore.heroDocumentary)
@@ -83,14 +85,21 @@ onMounted(async () => {
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 md:pb-24 w-full">
           <!-- When we have a hero documentary -->
           <div v-if="hero" class="max-w-2xl">
-              <!-- Sports Tags -->
+              <!-- Tags -->
               <div class="flex flex-wrap gap-2 mb-4">
                 <span
                   v-for="sport in hero.sports.slice(0, 3)"
-                  :key="sport.id"
+                  :key="'sport-' + sport.id"
                   class="px-3 py-1 bg-blue-500/90 text-white text-sm font-medium rounded-full backdrop-blur-sm"
                 >
-                  {{ sport.name }}
+                  {{ getName(sport) }}
+                </span>
+                <span
+                  v-for="theme in hero.themes.slice(0, 3)"
+                  :key="'theme-' + theme.id"
+                  class="px-3 py-1 bg-slate-500/90 text-white text-sm font-medium rounded-full backdrop-blur-sm"
+                >
+                  {{ getName(theme) }}
                 </span>
               </div>
 
@@ -290,7 +299,7 @@ onMounted(async () => {
             class="p-6 bg-white dark:bg-slate-700 rounded-xl shadow-sm hover:shadow-md transition-shadow text-center"
           >
             <span class="text-lg font-semibold text-slate-900 dark:text-white">
-              {{ sport.name }}
+              {{ getName(sport) }}
             </span>
           </RouterLink>
         </div>

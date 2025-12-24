@@ -35,7 +35,7 @@ class DocumentaryViewSet(viewsets.ReadOnlyModelViewSet):
 
     queryset = Documentary.objects.filter(is_published=True)
     filterset_class = DocumentaryFilter
-    search_fields = ["title", "original_title", "synopsis"]
+    search_fields = ["title", "original_title", "synopsis_en", "synopsis_fr"]
     ordering_fields = ["year", "title", "created_at"]
     ordering = ["-year"]
     lookup_field = "slug"
@@ -57,7 +57,7 @@ class DocumentaryViewSet(viewsets.ReadOnlyModelViewSet):
                 "availabilities__platform"
             )
 
-        return queryset
+        return queryset.distinct()
 
     @action(detail=False, methods=["get"])
     def featured(self, request):
@@ -136,8 +136,8 @@ class DocumentaryViewSet(viewsets.ReadOnlyModelViewSet):
         """Get popular documentaries (most reviewed)."""
         queryset = (
             self.get_queryset()
-            .annotate(review_count=Count("reviews"))
-            .order_by("-review_count", "-year")[:10]
+            .annotate(num_reviews=Count("reviews"))
+            .order_by("-num_reviews", "-year")[:10]
         )
         serializer = DocumentaryListSerializer(
             queryset, many=True, context={"request": request}

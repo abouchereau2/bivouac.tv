@@ -17,43 +17,31 @@ def get_request_language(context):
     """Get language from request context."""
     request = context.get("request")
     if request:
-        # Try query_params (DRF request) or GET (Django request)
-        query_params = getattr(request, "query_params", None) or getattr(request, "GET", {})
-        lang = query_params.get("lang") or getattr(request, "LANGUAGE_CODE", "en")
-        return lang[:2] if lang else "en"
+        # Try Accept-Language header first
+        accept_lang = request.META.get("HTTP_ACCEPT_LANGUAGE", "")
+        if accept_lang:
+            return accept_lang[:2]
+        # Fall back to LANGUAGE_CODE or 'en'
+        return getattr(request, "LANGUAGE_CODE", "en")[:2]
     return "en"
 
 
-class I18nNameMixin:
-    """Mixin to add language-aware name field."""
-
-    def get_name(self, obj):
-        lang = get_request_language(self.context)
-        return obj.get_name(lang)
-
-
-class SportSerializer(I18nNameMixin, serializers.ModelSerializer):
-    name = serializers.SerializerMethodField()
-
+class SportSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sport
-        fields = ["id", "name", "slug", "icon"]
+        fields = ["id", "name_en", "name_fr", "slug", "icon"]
 
 
-class ThemeSerializer(I18nNameMixin, serializers.ModelSerializer):
-    name = serializers.SerializerMethodField()
-
+class ThemeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Theme
-        fields = ["id", "name", "slug"]
+        fields = ["id", "name_en", "name_fr", "slug"]
 
 
-class RegionSerializer(I18nNameMixin, serializers.ModelSerializer):
-    name = serializers.SerializerMethodField()
-
+class RegionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Region
-        fields = ["id", "name", "slug"]
+        fields = ["id", "name_en", "name_fr", "slug"]
 
 
 class PersonSerializer(serializers.ModelSerializer):
@@ -117,6 +105,7 @@ class DocumentaryHeroSerializer(serializers.ModelSerializer):
     """Serializer for hero section (backdrop + synopsis + minimal metadata)."""
 
     sports = SportSerializer(many=True, read_only=True)
+    themes = ThemeSerializer(many=True, read_only=True)
     synopsis = serializers.SerializerMethodField()
     average_rating = serializers.ReadOnlyField()
 
@@ -124,7 +113,7 @@ class DocumentaryHeroSerializer(serializers.ModelSerializer):
         model = Documentary
         fields = [
             "id", "title", "slug", "year", "duration_minutes",
-            "synopsis", "backdrop", "poster", "sports", "average_rating"
+            "synopsis", "backdrop", "poster", "sports", "themes", "average_rating"
         ]
 
     def get_synopsis(self, obj):

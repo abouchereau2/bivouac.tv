@@ -6,6 +6,7 @@ import { useDocumentariesStore } from '@/stores/documentaries'
 import { useAuthStore } from '@/stores/auth'
 import { reviewsApi } from '@/services/api'
 import { useLocalePath } from '@/composables/useLocalePath'
+import { useLocalizedName } from '@/composables/useLocalizedName'
 import {
   Star, Clock, Calendar, Play, ExternalLink,
   Bookmark, BookmarkCheck, MapPin, Eye, EyeOff
@@ -16,6 +17,7 @@ import type { Review } from '@/types'
 
 const { t } = useI18n()
 const { localePath } = useLocalePath()
+const { getName } = useLocalizedName()
 const props = defineProps<{ slug: string }>()
 
 const docStore = useDocumentariesStore()
@@ -192,7 +194,7 @@ onMounted(() => {
               :to="localePath(`/browse?sport=${sport.slug}`)"
               class="px-3 py-1 bg-blue-600/20 text-blue-400 rounded-full text-sm hover:bg-blue-600/30"
             >
-              {{ sport.name }}
+              {{ getName(sport) }}
             </RouterLink>
             <RouterLink
               v-for="theme in doc.themes"
@@ -200,7 +202,7 @@ onMounted(() => {
               :to="localePath(`/browse?theme=${theme.slug}`)"
               class="px-3 py-1 bg-slate-600/50 text-slate-300 rounded-full text-sm hover:bg-slate-600/70"
             >
-              {{ theme.name }}
+              {{ getName(theme) }}
             </RouterLink>
           </div>
 
@@ -208,13 +210,13 @@ onMounted(() => {
           <div v-if="doc.regions.length" class="flex items-center gap-2 text-slate-400 mb-6">
             <MapPin class="w-4 h-4" />
             <span v-for="(region, i) in doc.regions" :key="region.id">
-              {{ region.name }}<span v-if="i < doc.regions.length - 1">, </span>
+              {{ getName(region) }}<span v-if="i < doc.regions.length - 1">, </span>
             </span>
           </div>
 
           <!-- Directors -->
           <div v-if="doc.directors.length" class="text-slate-400 mb-6">
-            <span class="text-slate-500">{{ t('doc.directedBy') }} </span>
+            <span class="text-slate-500">{{ t('doc.directedBy') }}&nbsp;</span>
             <span v-for="(director, i) in doc.directors" :key="director.id">
               {{ director.name }}<span v-if="i < doc.directors.length - 1">, </span>
             </span>

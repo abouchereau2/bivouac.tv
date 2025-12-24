@@ -2,20 +2,23 @@
 
 export interface Sport {
   id: number
-  name: string
+  name_en: string
+  name_fr: string
   slug: string
   icon?: string
 }
 
 export interface Theme {
   id: number
-  name: string
+  name_en: string
+  name_fr: string
   slug: string
 }
 
 export interface Region {
   id: number
-  name: string
+  name_en: string
+  name_fr: string
   slug: string
 }
 
@@ -69,6 +72,7 @@ export interface HeroDocumentary {
   backdrop?: string
   poster?: string
   sports: Sport[]
+  themes: Theme[]
   average_rating?: number
 }
 

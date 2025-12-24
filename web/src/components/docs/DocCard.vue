@@ -6,10 +6,12 @@ import { Star, Clock, Bookmark, BookmarkCheck, Eye, EyeOff } from 'lucide-vue-ne
 import { useAuthStore } from '@/stores/auth'
 import { useDocumentariesStore } from '@/stores/documentaries'
 import { useLocalePath } from '@/composables/useLocalePath'
+import { useLocalizedName } from '@/composables/useLocalizedName'
 import type { DocumentaryListItem } from '@/types'
 
 const { t } = useI18n()
 const { localePath } = useLocalePath()
+const { getName } = useLocalizedName()
 
 const props = defineProps<{
   documentary: DocumentaryListItem
@@ -94,7 +96,7 @@ async function toggleWatched() {
           :key="sport.id"
           class="text-xs px-2 py-0.5 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-full"
         >
-          {{ sport.name }}
+          {{ getName(sport) }}
         </span>
       </div>
     </RouterLink>

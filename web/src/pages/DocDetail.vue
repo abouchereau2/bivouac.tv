@@ -15,6 +15,7 @@ import ReviewForm from '@/components/docs/ReviewForm.vue'
 import ReviewList from '@/components/docs/ReviewList.vue'
 import LinkSuggestionModal from '@/components/docs/LinkSuggestionModal.vue'
 import LinkReportModal from '@/components/docs/LinkReportModal.vue'
+import PlatformIcon from '@/components/common/PlatformIcon.vue'
 import type { Review, Availability } from '@/types'
 
 const { t } = useI18n()
@@ -268,11 +269,10 @@ onMounted(() => {
               target="_blank"
               class="group flex items-center gap-4 p-4 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-blue-500 transition-colors"
             >
-              <img
-                v-if="availability.platform.logo"
-                :src="availability.platform.logo"
-                :alt="availability.platform.name"
-                class="w-12 h-12 object-contain rounded"
+              <PlatformIcon
+                :slug="availability.platform.slug"
+                :name="availability.platform.name"
+                :size="32"
               />
               <div class="flex-1 min-w-0">
                 <p class="font-medium text-slate-900 dark:text-white">

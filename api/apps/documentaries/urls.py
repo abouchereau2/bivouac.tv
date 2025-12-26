@@ -31,6 +31,14 @@ urlpatterns = [
     path("watched/<int:pk>/", views.WatchedViewSet.as_view({
         "delete": "destroy",
     }), name="watched-detail"),
+    # Favorites
+    path("favorites/", views.FavoriteViewSet.as_view({
+        "get": "list",
+        "post": "create",
+    }), name="favorites-list"),
+    path("favorites/<int:pk>/", views.FavoriteViewSet.as_view({
+        "delete": "destroy",
+    }), name="favorites-detail"),
     # Documentary routes (must be last due to slug matching)
     path("", include(router.urls)),
 ]

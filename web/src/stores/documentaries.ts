@@ -252,6 +252,43 @@ export const useDocumentariesStore = defineStore('documentaries', () => {
     }
   }
 
+  async function toggleFavorite(slug: string, isFavorited: boolean) {
+    try {
+      if (isFavorited) {
+        await documentariesApi.removeFromFavorites(slug)
+      } else {
+        await documentariesApi.addToFavorites(slug)
+      }
+
+      // Update local state
+      const updateItem = (item: DocumentaryListItem) => {
+        if (item.slug === slug) {
+          item.is_favorited = !isFavorited
+        }
+        return item
+      }
+
+      documentaries.value = documentaries.value.map(updateItem)
+      featured.value = featured.value.map(updateItem)
+      topRated.value = topRated.value.map(updateItem)
+      recent.value = recent.value.map(updateItem)
+      popular.value = popular.value.map(updateItem)
+      for (const key of Object.keys(themedCollections.value)) {
+        const collection = themedCollections.value[key]
+        if (collection) {
+          themedCollections.value[key] = collection.map(updateItem)
+        }
+      }
+
+      if (currentDocumentary.value?.slug === slug) {
+        currentDocumentary.value.is_favorited = !isFavorited
+      }
+    } catch (err: unknown) {
+      error.value = err instanceof Error ? err.message : 'Failed to update favorites'
+      throw err
+    }
+  }
+
   return {
     // State
     documentaries,
@@ -287,5 +324,6 @@ export const useDocumentariesStore = defineStore('documentaries', () => {
     fetchTaxonomy,
     toggleWatchlist,
     toggleWatched,
+    toggleFavorite,
   }
 })

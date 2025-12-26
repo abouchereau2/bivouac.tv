@@ -25,6 +25,7 @@
     "profile": "Profil",
     "watchlist": "Ma Liste",
     "watched": "Déjà vus",
+    "favorites": "Mes Favoris",
     "login": "Connexion",
     "signup": "Inscription",
     "logout": "Déconnexion"
@@ -95,6 +96,9 @@
     "watched": "Vu",
     "markAsWatched": "Marquer comme vu",
     "markAsUnwatched": "Marquer comme non vu",
+    "favorited": "Favori",
+    "addToFavorites": "Ajouter aux favoris",
+    "removeFromFavorites": "Retirer des favoris",
     "whereToWatch": "Où regarder",
     "noStreaming": "Aucune information de diffusion disponible.",
     "helpStreaming": "Vous savez où regarder ce documentaire ? Aidez-nous en proposant un lien !",
@@ -162,6 +166,12 @@
     "title": "Déjà vus",
     "empty": "Vous n'avez encore marqué aucun documentaire comme vu",
     "emptyDescription": "Marquez les documentaires que vous avez déjà vus pour garder une trace de votre historique.",
+    "browseButton": "Explorer les documentaires"
+  },
+  "favorites": {
+    "title": "Mes Favoris",
+    "empty": "Vous n'avez pas encore de favoris",
+    "emptyDescription": "Ajoutez vos documentaires préférés en cliquant sur le cœur pour créer votre collection personnelle.",
     "browseButton": "Explorer les documentaires"
   },
   "submit": {

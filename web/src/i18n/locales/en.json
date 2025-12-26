@@ -25,6 +25,7 @@
     "profile": "Profile",
     "watchlist": "My Watchlist",
     "watched": "Already Watched",
+    "favorites": "My Favorites",
     "login": "Login",
     "signup": "Sign Up",
     "logout": "Logout"
@@ -95,6 +96,9 @@
     "watched": "Watched",
     "markAsWatched": "Mark as Watched",
     "markAsUnwatched": "Mark as unwatched",
+    "favorited": "Favorited",
+    "addToFavorites": "Add to Favorites",
+    "removeFromFavorites": "Remove from favorites",
     "whereToWatch": "Where to Watch",
     "noStreaming": "No streaming information available yet.",
     "helpStreaming": "Know where to watch this documentary? Help us by submitting a link!",
@@ -162,6 +166,12 @@
     "title": "Already Watched",
     "empty": "You haven't marked any documentaries as watched yet",
     "emptyDescription": "Mark documentaries you've already seen to keep track of your viewing history.",
+    "browseButton": "Browse documentaries"
+  },
+  "favorites": {
+    "title": "My Favorites",
+    "empty": "You haven't added any favorites yet",
+    "emptyDescription": "Heart documentaries you love to build your personal collection of all-time greats.",
     "browseButton": "Browse documentaries"
   },
   "submit": {

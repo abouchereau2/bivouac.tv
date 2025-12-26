@@ -3,6 +3,7 @@ from rest_framework import serializers
 from .models import (
     Availability,
     Documentary,
+    Favorite,
     Person,
     Platform,
     Region,
@@ -75,13 +76,14 @@ class DocumentaryListSerializer(serializers.ModelSerializer):
     review_count = serializers.ReadOnlyField()
     is_in_watchlist = serializers.SerializerMethodField()
     is_watched = serializers.SerializerMethodField()
+    is_favorited = serializers.SerializerMethodField()
 
     class Meta:
         model = Documentary
         fields = [
             "id", "title", "slug", "year", "duration_minutes",
             "poster", "sports", "average_rating", "review_count",
-            "is_in_watchlist", "is_watched"
+            "is_in_watchlist", "is_watched", "is_favorited"
         ]
 
     def get_is_in_watchlist(self, obj):
@@ -96,6 +98,14 @@ class DocumentaryListSerializer(serializers.ModelSerializer):
         request = self.context.get("request")
         if request and request.user.is_authenticated:
             return Watched.objects.filter(
+                user=request.user, documentary=obj
+            ).exists()
+        return False
+
+    def get_is_favorited(self, obj):
+        request = self.context.get("request")
+        if request and request.user.is_authenticated:
+            return Favorite.objects.filter(
                 user=request.user, documentary=obj
             ).exists()
         return False
@@ -134,6 +144,7 @@ class DocumentaryDetailSerializer(serializers.ModelSerializer):
     review_count = serializers.ReadOnlyField()
     is_in_watchlist = serializers.SerializerMethodField()
     is_watched = serializers.SerializerMethodField()
+    is_favorited = serializers.SerializerMethodField()
     synopsis = serializers.SerializerMethodField()
 
     class Meta:
@@ -144,7 +155,7 @@ class DocumentaryDetailSerializer(serializers.ModelSerializer):
             "directors", "sports", "themes", "regions",
             "imdb_id", "imdb_rating", "tmdb_id",
             "availabilities", "average_rating", "review_count",
-            "is_in_watchlist", "is_watched", "created_at", "updated_at"
+            "is_in_watchlist", "is_watched", "is_favorited", "created_at", "updated_at"
         ]
 
     def get_synopsis(self, obj):
@@ -164,6 +175,14 @@ class DocumentaryDetailSerializer(serializers.ModelSerializer):
         request = self.context.get("request")
         if request and request.user.is_authenticated:
             return Watched.objects.filter(
+                user=request.user, documentary=obj
+            ).exists()
+        return False
+
+    def get_is_favorited(self, obj):
+        request = self.context.get("request")
+        if request and request.user.is_authenticated:
+            return Favorite.objects.filter(
                 user=request.user, documentary=obj
             ).exists()
         return False
@@ -198,6 +217,24 @@ class WatchedSerializer(serializers.ModelSerializer):
 class WatchedCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Watched
+        fields = ["documentary"]
+
+    def create(self, validated_data):
+        validated_data["user"] = self.context["request"].user
+        return super().create(validated_data)
+
+
+class FavoriteSerializer(serializers.ModelSerializer):
+    documentary = DocumentaryListSerializer(read_only=True)
+
+    class Meta:
+        model = Favorite
+        fields = ["id", "documentary", "added_at"]
+
+
+class FavoriteCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Favorite
         fields = ["documentary"]
 
     def create(self, validated_data):

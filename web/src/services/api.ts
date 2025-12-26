@@ -4,6 +4,7 @@ import type {
   Documentary,
   DocumentaryFilters,
   DocumentaryListItem,
+  FavoriteItem,
   HeroDocumentary,
   PaginatedResponse,
   Platform,
@@ -124,6 +125,12 @@ export const documentariesApi = {
 
   removeFromWatched: (slug: string) =>
     api.delete(`/documentaries/${slug}/remove_from_watched/`),
+
+  addToFavorites: (slug: string) =>
+    api.post(`/documentaries/${slug}/add_to_favorites/`),
+
+  removeFromFavorites: (slug: string) =>
+    api.delete(`/documentaries/${slug}/remove_from_favorites/`),
 }
 
 // Taxonomy API
@@ -148,6 +155,14 @@ export const watchedApi = {
   add: (documentaryId: number) =>
     api.post('/documentaries/watched/', { documentary: documentaryId }),
   remove: (id: number) => api.delete(`/documentaries/watched/${id}/`),
+}
+
+// Favorites API
+export const favoritesApi = {
+  list: () => api.get<PaginatedResponse<FavoriteItem>>('/documentaries/favorites/'),
+  add: (documentaryId: number) =>
+    api.post('/documentaries/favorites/', { documentary: documentaryId }),
+  remove: (id: number) => api.delete(`/documentaries/favorites/${id}/`),
 }
 
 // Reviews API

@@ -60,6 +60,7 @@ export interface DocumentaryListItem {
   review_count: number
   is_in_watchlist: boolean
   is_watched: boolean
+  is_favorited: boolean
 }
 
 export interface HeroDocumentary {
@@ -150,6 +151,12 @@ export interface WatchedItem {
   id: number
   documentary: DocumentaryListItem
   watched_at: string
+}
+
+export interface FavoriteItem {
+  id: number
+  documentary: DocumentaryListItem
+  added_at: string
 }
 
 // API Response types

@@ -1,5 +1,6 @@
-from rest_framework import permissions, viewsets
+from rest_framework import permissions, status, viewsets
 from rest_framework.exceptions import PermissionDenied
+from rest_framework.response import Response
 
 from .models import Review
 from .serializers import ReviewCreateSerializer, ReviewSerializer
@@ -27,6 +28,26 @@ class ReviewViewSet(viewsets.ModelViewSet):
         if self.action in ["create", "update", "partial_update"]:
             return ReviewCreateSerializer
         return ReviewSerializer
+
+    def create(self, request, *args, **kwargs):
+        """Create review and return full serialized data."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        # Return full review data with user info
+        response_serializer = ReviewSerializer(serializer.instance, context={"request": request})
+        return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+
+    def update(self, request, *args, **kwargs):
+        """Update review and return full serialized data."""
+        partial = kwargs.pop("partial", False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        # Return full review data with user info
+        response_serializer = ReviewSerializer(instance, context={"request": request})
+        return Response(response_serializer.data)
 
     def get_queryset(self):
         queryset = super().get_queryset()

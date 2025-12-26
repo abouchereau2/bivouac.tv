@@ -51,6 +51,12 @@ const appRoutes = [
     meta: { requiresAuth: true },
   },
   {
+    path: 'favorites',
+    name: 'favorites',
+    component: () => import('@/pages/Favorites.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
     path: 'submit',
     name: 'submit',
     component: () => import('@/pages/Submit.vue'),

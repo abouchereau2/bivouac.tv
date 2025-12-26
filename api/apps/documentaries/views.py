@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from .filters import DocumentaryFilter
 from .models import (
     Documentary,
+    Favorite,
     Person,
     Platform,
     Region,
@@ -18,6 +19,8 @@ from .serializers import (
     DocumentaryDetailSerializer,
     DocumentaryHeroSerializer,
     DocumentaryListSerializer,
+    FavoriteCreateSerializer,
+    FavoriteSerializer,
     PersonSerializer,
     PlatformSerializer,
     RegionSerializer,
@@ -220,6 +223,28 @@ class DocumentaryViewSet(viewsets.ReadOnlyModelViewSet):
             return Response({"status": "removed"}, status=status.HTTP_200_OK)
         return Response({"status": "not in watched list"}, status=status.HTTP_404_NOT_FOUND)
 
+    @action(detail=True, methods=["post"], permission_classes=[permissions.IsAuthenticated])
+    def add_to_favorites(self, request, slug=None):
+        """Add documentary to user's favorites."""
+        documentary = self.get_object()
+        favorite, created = Favorite.objects.get_or_create(
+            user=request.user, documentary=documentary
+        )
+        if created:
+            return Response({"status": "added"}, status=status.HTTP_201_CREATED)
+        return Response({"status": "already in favorites"}, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=["delete"], permission_classes=[permissions.IsAuthenticated])
+    def remove_from_favorites(self, request, slug=None):
+        """Remove documentary from user's favorites."""
+        documentary = self.get_object()
+        deleted, _ = Favorite.objects.filter(
+            user=request.user, documentary=documentary
+        ).delete()
+        if deleted:
+            return Response({"status": "removed"}, status=status.HTTP_200_OK)
+        return Response({"status": "not in favorites"}, status=status.HTTP_404_NOT_FOUND)
+
 
 class WatchlistViewSet(viewsets.ModelViewSet):
     """ViewSet for user's watchlist."""
@@ -251,6 +276,22 @@ class WatchedViewSet(viewsets.ModelViewSet):
         if self.action == "create":
             return WatchedCreateSerializer
         return WatchedSerializer
+
+
+class FavoriteViewSet(viewsets.ModelViewSet):
+    """ViewSet for user's favorites."""
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Favorite.objects.filter(user=self.request.user).select_related(
+            "documentary"
+        ).prefetch_related("documentary__sports")
+
+    def get_serializer_class(self):
+        if self.action == "create":
+            return FavoriteCreateSerializer
+        return FavoriteSerializer
 
 
 class SportListView(generics.ListAPIView):

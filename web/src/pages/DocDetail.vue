@@ -9,7 +9,7 @@ import { useLocalePath } from '@/composables/useLocalePath'
 import { useLocalizedName } from '@/composables/useLocalizedName'
 import {
   Star, Clock, Calendar, Play, ExternalLink,
-  Bookmark, BookmarkCheck, MapPin, Eye, EyeOff
+  Bookmark, BookmarkCheck, MapPin, Eye, EyeOff, Heart
 } from 'lucide-vue-next'
 import ReviewForm from '@/components/docs/ReviewForm.vue'
 import ReviewList from '@/components/docs/ReviewList.vue'
@@ -54,6 +54,11 @@ async function toggleWatchlist() {
 async function toggleWatched() {
   if (!doc.value || !authStore.isAuthenticated) return
   await docStore.toggleWatched(doc.value.slug, doc.value.is_watched)
+}
+
+async function toggleFavorite() {
+  if (!doc.value || !authStore.isAuthenticated) return
+  await docStore.toggleFavorite(doc.value.slug, doc.value.is_favorited)
 }
 
 async function fetchReviews() {
@@ -178,6 +183,16 @@ onMounted(() => {
               <BookmarkCheck v-if="doc.is_in_watchlist" class="w-4 h-4" />
               <Bookmark v-else class="w-4 h-4" />
               {{ doc.is_in_watchlist ? t('doc.inWatchlist') : t('doc.addToWatchlist') }}
+            </button>
+
+            <button
+              v-if="authStore.isAuthenticated"
+              @click="toggleFavorite"
+              class="inline-flex items-center gap-2 px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-600"
+              :class="{ 'bg-red-600 hover:bg-red-700': doc.is_favorited }"
+            >
+              <Heart class="w-4 h-4" :class="{ 'fill-current': doc.is_favorited }" />
+              {{ doc.is_favorited ? t('doc.favorited') : t('doc.addToFavorites') }}
             </button>
           </div>
 

@@ -9,19 +9,19 @@
 | 31 | ORA (2022) | Anime japonais (lycéenne + pompier) |ok
 | 32 | Exposure (2022) | Thriller (hacker + CCTV) |ok
 | 49 | Dug out (2018) | Anime japonais (baseball + Peter Drucker) |ok
-| 60 | Le paradis perdu (2017) | Vieux film français de 1940 avec André Lefaur |
-| 62 | Tom (2017) | Film d'horreur expérimental "Peeping Tom" |
-| 73 | Bear Island (2015) | Thriller avec Donald Sutherland (or nazi) |
-| 109 | L'île Rouge pas à pas | Interview Robin Campillo San Sebastian |
+| 60 | Le paradis perdu (2017) | Vieux film français de 1940 avec André Lefaur |ok
+| 62 | Tom (2017) | Film d'horreur expérimental "Peeping Tom" |ok
+| 73 | Bear Island (2015) | Thriller avec Donald Sutherland (or nazi) |ok
+| 109 | L'île Rouge pas à pas | Interview Robin Campillo San Sebastian |ok
 
 
 ## Synopsis incomplets (juste "Winner of...")
 
 | ID | Titre |
 |----|-------|
-| 3 | Mercantour sous nos pieds (2025) |
-| 8 | 2000 jours au Paradis (2025) |
-| 18 | Mongolie, la vallée des ours (2023) |
+| 3 | Mercantour sous nos pieds (2025) |ok
+| 8 | 2000 jours au Paradis (2025) |ok
+| 18 | Mongolie, la vallée des ours (2023) |ok
 | 19 | On a marché sous la terre (2023) |
 | 26 | L'aventure (2022) |
 | 33 | Lumdo Kolola (2022) |

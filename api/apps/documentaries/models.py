@@ -286,3 +286,22 @@ class Watched(models.Model):
 
     def __str__(self):
         return f"{self.user.email} watched {self.documentary.title}"
+
+
+class Favorite(models.Model):
+    """User's favorite documentaries - their personal best picks."""
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="favorites"
+    )
+    documentary = models.ForeignKey(
+        Documentary, on_delete=models.CASCADE, related_name="favorited_by"
+    )
+    added_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ["user", "documentary"]
+        ordering = ["-added_at"]
+
+    def __str__(self):
+        return f"{self.user.email} favorited {self.documentary.title}"

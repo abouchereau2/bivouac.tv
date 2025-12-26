@@ -221,6 +221,8 @@ export const notificationsApi = {
 
   pendingCount: () => api.get<{ count: number }>('/notifications/pending_count/'),
 
+  counts: () => api.get<{ unread: number; pending: number }>('/notifications/counts/'),
+
   markAsRead: (id: number) => api.post<Notification>(`/notifications/${id}/mark_as_read/`),
 
   markAllAsRead: () => api.post<{ updated: number }>('/notifications/mark_all_as_read/'),

@@ -9,6 +9,7 @@ export const useNotificationsStore = defineStore('notifications', () => {
   const pendingCount = ref(0)
   const loading = ref(false)
   const isInitialized = ref(false)
+  const initializePromise = ref<Promise<void> | null>(null)
   const currentStatusFilter = ref<NotificationStatus | undefined>(undefined)
 
   const hasUnread = computed(() => unreadCount.value > 0)
@@ -41,6 +42,16 @@ export const useNotificationsStore = defineStore('notifications', () => {
     try {
       const { data } = await notificationsApi.pendingCount()
       pendingCount.value = data.count
+    } catch {
+      // Silently fail - not critical
+    }
+  }
+
+  async function fetchCounts() {
+    try {
+      const { data } = await notificationsApi.counts()
+      unreadCount.value = data.unread
+      pendingCount.value = data.pending
     } catch {
       // Silently fail - not critical
     }
@@ -94,8 +105,24 @@ export const useNotificationsStore = defineStore('notifications', () => {
   }
 
   async function initialize() {
-    if (isInitialized.value) return
-    await Promise.all([fetchNotifications(), fetchUnreadCount(), fetchPendingCount()])
+    // Return existing promise if already initializing (prevents race conditions)
+    if (initializePromise.value) {
+      return initializePromise.value
+    }
+    // Skip if already initialized
+    if (isInitialized.value) {
+      return
+    }
+
+    initializePromise.value = Promise.all([
+      fetchNotifications(),
+      fetchCounts(),
+    ]).then(() => {
+      isInitialized.value = true
+      initializePromise.value = null
+    })
+
+    return initializePromise.value
   }
 
   function reset() {
@@ -118,6 +145,7 @@ export const useNotificationsStore = defineStore('notifications', () => {
     fetchNotifications,
     fetchUnreadCount,
     fetchPendingCount,
+    fetchCounts,
     markAsRead,
     markAllAsRead,
     dismissNotification,

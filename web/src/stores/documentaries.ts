@@ -41,6 +41,10 @@ export const useDocumentariesStore = defineStore('documentaries', () => {
   const loadingMore = ref(false)
   const error = ref<string | null>(null)
 
+  // Taxonomy loading state
+  const taxonomyLoaded = ref(false)
+  const taxonomyPromise = ref<Promise<void> | null>(null)
+
   // Actions
   async function fetchDocumentaries(filters?: DocumentaryFilters) {
     loading.value = true
@@ -162,20 +166,37 @@ export const useDocumentariesStore = defineStore('documentaries', () => {
   }
 
   async function fetchTaxonomy() {
-    try {
-      const [sportsRes, themesRes, regionsRes, platformsRes] = await Promise.all([
-        taxonomyApi.sports(),
-        taxonomyApi.themes(),
-        taxonomyApi.regions(),
-        taxonomyApi.platforms(),
-      ])
-      sports.value = sportsRes.data
-      themes.value = themesRes.data
-      regions.value = regionsRes.data
-      platforms.value = platformsRes.data
-    } catch {
-      // Silently fail for taxonomy
+    // Return existing promise if already loading (prevents race conditions)
+    if (taxonomyPromise.value) {
+      return taxonomyPromise.value
     }
+    // Skip if already loaded
+    if (taxonomyLoaded.value) {
+      return
+    }
+
+    const doFetch = async () => {
+      try {
+        const [sportsRes, themesRes, regionsRes, platformsRes] = await Promise.all([
+          taxonomyApi.sports(),
+          taxonomyApi.themes(),
+          taxonomyApi.regions(),
+          taxonomyApi.platforms(),
+        ])
+        sports.value = sportsRes.data
+        themes.value = themesRes.data
+        regions.value = regionsRes.data
+        platforms.value = platformsRes.data
+        taxonomyLoaded.value = true
+      } catch {
+        // Silently fail for taxonomy
+      } finally {
+        taxonomyPromise.value = null
+      }
+    }
+
+    taxonomyPromise.value = doFetch()
+    return taxonomyPromise.value
   }
 
   async function toggleWatchlist(slug: string, isInWatchlist: boolean) {

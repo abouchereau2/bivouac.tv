@@ -9,6 +9,8 @@ export const useAuthStore = defineStore('auth', () => {
   const loading = ref(false)
   const error = ref<string | null>(null)
   const pendingReviewCount = ref(0)
+  const isInitialized = ref(false)
+  const initializePromise = ref<Promise<void> | null>(null)
 
   const isAuthenticated = computed(() => !!user.value)
   const isAdmin = computed(() => !!user.value?.is_staff)
@@ -56,6 +58,7 @@ export const useAuthStore = defineStore('auth', () => {
       localStorage.removeItem('access_token')
       localStorage.removeItem('refresh_token')
       notificationsStore.reset()
+      isInitialized.value = false
     }
   }
 
@@ -96,7 +99,21 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function initialize() {
-    await fetchUser()
+    // Return existing promise if already initializing (prevents race conditions)
+    if (initializePromise.value) {
+      return initializePromise.value
+    }
+    // Skip if already initialized
+    if (isInitialized.value) {
+      return
+    }
+
+    initializePromise.value = fetchUser().finally(() => {
+      isInitialized.value = true
+      initializePromise.value = null
+    })
+
+    return initializePromise.value
   }
 
   async function updateProfile(data: { username?: string; bio?: string }) {

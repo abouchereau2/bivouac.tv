@@ -39,7 +39,8 @@ const themedSections = [
 ]
 
 onMounted(async () => {
-  // Fetch taxonomy first so we can access themes
+  // Ensure taxonomy is loaded (will return immediately if already cached)
+  // Then fetch all home page data in parallel
   await docStore.fetchTaxonomy()
 
   await Promise.all([
@@ -48,7 +49,6 @@ onMounted(async () => {
     docStore.fetchTopRated(),
     docStore.fetchRecent(),
     docStore.fetchPopular(),
-    // Fetch themed collections
     ...themedSections.map((section) => docStore.fetchByTheme(section.slug)),
   ])
 })

@@ -31,6 +31,15 @@ class NotificationViewSet(viewsets.ReadOnlyModelViewSet):
         count = self.get_queryset().filter(status=Notification.Status.PENDING).count()
         return Response({"count": count})
 
+    @action(detail=False, methods=["get"])
+    def counts(self, request):
+        """Get all notification counts in a single request."""
+        queryset = self.get_queryset()
+        return Response({
+            "unread": queryset.filter(read=False).count(),
+            "pending": queryset.filter(status=Notification.Status.PENDING).count(),
+        })
+
     @action(detail=True, methods=["post"])
     def mark_as_read(self, request, pk=None):
         """Mark a single notification as read."""

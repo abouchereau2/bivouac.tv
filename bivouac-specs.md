@@ -462,7 +462,7 @@ whats next:
 - make the website fr / eng trad | ✅ Done |
 - from detailed doc view, make the directors name clickable, and filter docs
 - add public API
-- add platform icons in "where to watch" links in doc detail
+- add platform icons in "where to watch" links in doc detail | ✅ Done |
 
 ---
 

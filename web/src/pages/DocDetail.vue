@@ -272,6 +272,7 @@ onMounted(() => {
               <PlatformIcon
                 :slug="availability.platform.slug"
                 :name="availability.platform.name"
+                :logo="availability.platform.logo"
                 :size="32"
               />
               <div class="flex-1 min-w-0">

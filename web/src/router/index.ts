@@ -57,10 +57,22 @@ const appRoutes = [
     meta: { requiresAuth: true },
   },
   {
+    path: 'notifications',
+    name: 'notifications',
+    component: () => import('@/pages/Notifications.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
     path: 'submit',
     name: 'submit',
     component: () => import('@/pages/Submit.vue'),
     meta: { requiresAuth: true },
+  },
+  {
+    path: 'admin',
+    name: 'admin',
+    component: () => import('@/pages/Admin.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true },
   },
 ]
 
@@ -128,6 +140,13 @@ router.beforeEach(async (to, _from, next) => {
 
   // Check if route is for guests only
   if (to.meta.guest && authStore.isAuthenticated) {
+    const lang = to.params.lang || DEFAULT_LOCALE
+    next({ name: 'home', params: { lang } })
+    return
+  }
+
+  // Check if route requires admin
+  if (to.meta.requiresAdmin && !authStore.isAdmin) {
     const lang = to.params.lang || DEFAULT_LOCALE
     next({ name: 'home', params: { lang } })
     return

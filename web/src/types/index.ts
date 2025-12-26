@@ -99,6 +99,7 @@ export interface User {
   username: string
   first_name?: string
   last_name?: string
+  is_staff: boolean
   profile?: UserProfile
   date_joined: string
 }
@@ -141,6 +142,42 @@ export interface Submission {
   created_at: string
 }
 
+export interface LinkSuggestion {
+  id: number
+  documentary: number
+  documentary_title: string
+  documentary_slug: string
+  platform: Platform
+  url: string
+  is_free: boolean
+  notes?: string
+  submitted_by: {
+    id: number
+    username: string
+    avatar?: string
+  }
+  status: 'pending' | 'approved' | 'rejected'
+  created_at: string
+}
+
+export interface LinkReport {
+  id: number
+  availability: number
+  documentary_title: string
+  documentary_slug: string
+  platform_name: string
+  availability_url: string
+  reason: 'broken' | 'geo_restricted' | 'paywall' | 'wrong_content' | 'other'
+  details?: string
+  reported_by: {
+    id: number
+    username: string
+    avatar?: string
+  }
+  status: 'pending' | 'fixed' | 'dismissed'
+  created_at: string
+}
+
 export interface WatchlistItem {
   id: number
   documentary: DocumentaryListItem
@@ -157,6 +194,33 @@ export interface FavoriteItem {
   id: number
   documentary: DocumentaryListItem
   added_at: string
+}
+
+export type NotificationType =
+  | 'submission_pending'
+  | 'submission_approved'
+  | 'submission_rejected'
+  | 'link_suggestion_pending'
+  | 'link_suggestion_approved'
+  | 'link_suggestion_rejected'
+  | 'link_report_pending'
+  | 'link_report_fixed'
+  | 'link_report_dismissed'
+
+export type NotificationStatus = 'pending' | 'resolved'
+
+export interface Notification {
+  id: number
+  notification_type: NotificationType
+  status: NotificationStatus
+  title: string
+  message: string
+  read: boolean
+  read_at?: string
+  created_at: string
+  documentary_title?: string
+  documentary_slug?: string
+  documentary_poster?: string
 }
 
 // API Response types

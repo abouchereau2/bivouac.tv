@@ -6,6 +6,9 @@ import type {
   DocumentaryListItem,
   FavoriteItem,
   HeroDocumentary,
+  LinkReport,
+  LinkSuggestion,
+  Notification,
   PaginatedResponse,
   Platform,
   Region,
@@ -189,6 +192,76 @@ export const submissionsApi = {
     api.post<Submission>('/submissions/', data),
 
   get: (id: number) => api.get<Submission>(`/submissions/${id}/`),
+}
+
+// Link Suggestions API
+export const linkSuggestionsApi = {
+  list: () => api.get<PaginatedResponse<LinkSuggestion>>('/submissions/link-suggestions/'),
+
+  create: (data: { documentary: number; platform: number; url: string; is_free: boolean; notes?: string }) =>
+    api.post<LinkSuggestion>('/submissions/link-suggestions/', data),
+
+  get: (id: number) => api.get<LinkSuggestion>(`/submissions/link-suggestions/${id}/`),
+}
+
+// Link Reports API
+export const linkReportsApi = {
+  list: () => api.get<PaginatedResponse<LinkReport>>('/submissions/link-reports/'),
+
+  create: (data: { availability: number; reason: string; details?: string }) =>
+    api.post<LinkReport>('/submissions/link-reports/', data),
+}
+
+// Notifications API
+export const notificationsApi = {
+  list: (params?: { read?: boolean; status?: 'pending' | 'resolved' }) =>
+    api.get<PaginatedResponse<Notification>>('/notifications/', { params }),
+
+  unreadCount: () => api.get<{ count: number }>('/notifications/unread_count/'),
+
+  pendingCount: () => api.get<{ count: number }>('/notifications/pending_count/'),
+
+  markAsRead: (id: number) => api.post<Notification>(`/notifications/${id}/mark_as_read/`),
+
+  markAllAsRead: () => api.post<{ updated: number }>('/notifications/mark_all_as_read/'),
+
+  dismiss: (id: number) => api.delete(`/notifications/${id}/dismiss/`),
+}
+
+// Admin API (staff only)
+export interface PendingCounts {
+  submissions: number
+  suggestions: number
+  reports: number
+  total: number
+}
+
+export const adminApi = {
+  // Pending counts (lightweight)
+  pendingCounts: () => api.get<PendingCounts>('/submissions/pending-counts/'),
+
+  // Pending items
+  pendingSubmissions: () => api.get<Submission[]>('/submissions/pending/'),
+  pendingLinkSuggestions: () => api.get<LinkSuggestion[]>('/submissions/link-suggestions/pending/'),
+  pendingLinkReports: () => api.get<LinkReport[]>('/submissions/link-reports/pending/'),
+
+  // Submission actions
+  approveSubmission: (id: number, notes?: string) =>
+    api.post<Submission>(`/submissions/${id}/approve/`, { notes }),
+  rejectSubmission: (id: number, notes?: string) =>
+    api.post<Submission>(`/submissions/${id}/reject/`, { notes }),
+
+  // Link suggestion actions
+  approveLinkSuggestion: (id: number, notes?: string) =>
+    api.post<LinkSuggestion>(`/submissions/link-suggestions/${id}/approve/`, { notes }),
+  rejectLinkSuggestion: (id: number, notes?: string) =>
+    api.post<LinkSuggestion>(`/submissions/link-suggestions/${id}/reject/`, { notes }),
+
+  // Link report actions
+  fixLinkReport: (id: number, notes?: string) =>
+    api.post<LinkReport>(`/submissions/link-reports/${id}/fix/`, { notes }),
+  dismissLinkReport: (id: number, notes?: string) =>
+    api.post<LinkReport>(`/submissions/link-reports/${id}/dismiss/`, { notes }),
 }
 
 export default api

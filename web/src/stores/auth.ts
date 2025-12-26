@@ -1,14 +1,17 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { authApi } from '@/services/api'
+import { authApi, adminApi } from '@/services/api'
+import { useNotificationsStore } from '@/stores/notifications'
 import type { User } from '@/types'
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<User | null>(null)
   const loading = ref(false)
   const error = ref<string | null>(null)
+  const pendingReviewCount = ref(0)
 
   const isAuthenticated = computed(() => !!user.value)
+  const isAdmin = computed(() => !!user.value?.is_staff)
 
   async function login(email: string, password: string) {
     loading.value = true
@@ -45,12 +48,14 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function logout() {
+    const notificationsStore = useNotificationsStore()
     try {
       await authApi.logout()
     } finally {
       user.value = null
       localStorage.removeItem('access_token')
       localStorage.removeItem('refresh_token')
+      notificationsStore.reset()
     }
   }
 
@@ -64,10 +69,29 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       const { data } = await authApi.getUser()
       user.value = data
+
+      // Initialize notifications for authenticated users
+      const notificationsStore = useNotificationsStore()
+      notificationsStore.initialize()
+
+      // Fetch pending review count for admins
+      if (data.is_staff) {
+        await fetchPendingCount()
+      }
     } catch {
       user.value = null
       localStorage.removeItem('access_token')
       localStorage.removeItem('refresh_token')
+    }
+  }
+
+  async function fetchPendingCount() {
+    if (!user.value?.is_staff) return
+    try {
+      const { data } = await adminApi.pendingCounts()
+      pendingReviewCount.value = data.total
+    } catch {
+      // Silently fail - not critical
     }
   }
 
@@ -106,10 +130,13 @@ export const useAuthStore = defineStore('auth', () => {
     loading,
     error,
     isAuthenticated,
+    isAdmin,
+    pendingReviewCount,
     login,
     register,
     logout,
     fetchUser,
+    fetchPendingCount,
     initialize,
     updateProfile,
   }

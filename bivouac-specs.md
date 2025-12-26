@@ -456,12 +456,13 @@ whats next:
   - add a full list creation/visualization made by users for public use
 - we have 'add to watchlist', we need know 'watched' | ✅ Done |
 - add a 'favorite' list + icon | ✅ Done |
-- when user commits some changes, add a system of admin queue validation (me), only the validation gives the user badges
+- when user commits some changes, add a system of admin queue validation (me) | ✅ Done |
 - enhance homepage, like justwatch, with "sliders" of movies based on popular themes, like 'popular', 'survival', 'mountain', etc...  | ✅ Done |
 - put all the filters on the footer
 - make the website fr / eng trad | ✅ Done |
 - from detailed doc view, make the directors name clickable, and filter docs
 - add public API
+- add platform icons in "where to watch" links in doc detail
 
 ---
 

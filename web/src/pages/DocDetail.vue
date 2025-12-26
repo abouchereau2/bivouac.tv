@@ -9,11 +9,13 @@ import { useLocalePath } from '@/composables/useLocalePath'
 import { useLocalizedName } from '@/composables/useLocalizedName'
 import {
   Star, Clock, Calendar, Play, ExternalLink,
-  Bookmark, BookmarkCheck, MapPin, Eye, EyeOff, Heart
+  Bookmark, BookmarkCheck, MapPin, Eye, EyeOff, Heart, Plus, Flag
 } from 'lucide-vue-next'
 import ReviewForm from '@/components/docs/ReviewForm.vue'
 import ReviewList from '@/components/docs/ReviewList.vue'
-import type { Review } from '@/types'
+import LinkSuggestionModal from '@/components/docs/LinkSuggestionModal.vue'
+import LinkReportModal from '@/components/docs/LinkReportModal.vue'
+import type { Review, Availability } from '@/types'
 
 const { t } = useI18n()
 const { localePath } = useLocalePath()
@@ -30,6 +32,21 @@ const reviewsLoading = ref(false)
 const userReview = computed(() =>
   reviews.value.find(r => r.user.id === authStore.user?.id)
 )
+
+// Link modals
+const showLinkSuggestionModal = ref(false)
+const showLinkReportModal = ref(false)
+const reportingAvailability = ref<Availability | null>(null)
+
+function openReportModal(availability: Availability) {
+  reportingAvailability.value = availability
+  showLinkReportModal.value = true
+}
+
+function closeReportModal() {
+  showLinkReportModal.value = false
+  reportingAvailability.value = null
+}
 
 const hasRealBackdrop = computed(() => !!doc.value?.backdrop)
 
@@ -242,38 +259,66 @@ onMounted(() => {
       <!-- Where to Watch -->
       <section class="mt-12">
         <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-6">{{ t('doc.whereToWatch') }}</h2>
-        <div v-if="doc.availabilities.length" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <a
-            v-for="availability in doc.availabilities"
-            :key="availability.id"
-            :href="availability.url"
-            target="_blank"
-            class="flex items-center gap-4 p-4 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-blue-500 transition-colors"
+        <div v-if="doc.availabilities.length" class="space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <a
+              v-for="availability in doc.availabilities"
+              :key="availability.id"
+              :href="availability.url"
+              target="_blank"
+              class="group flex items-center gap-4 p-4 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-blue-500 transition-colors"
+            >
+              <img
+                v-if="availability.platform.logo"
+                :src="availability.platform.logo"
+                :alt="availability.platform.name"
+                class="w-12 h-12 object-contain rounded"
+              />
+              <div class="flex-1 min-w-0">
+                <p class="font-medium text-slate-900 dark:text-white">
+                  {{ availability.platform.name }}
+                </p>
+                <p class="text-sm text-slate-500">
+                  {{ availability.is_free ? t('common.free') : t('common.subscription') }}
+                </p>
+              </div>
+              <div class="flex items-center gap-2">
+                <button
+                  v-if="authStore.isAuthenticated"
+                  @click.prevent="openReportModal(availability)"
+                  class="p-1.5 text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                  :title="t('link.reportLink')"
+                >
+                  <Flag class="w-4 h-4" />
+                </button>
+                <ExternalLink class="w-5 h-5 text-slate-400" />
+              </div>
+            </a>
+          </div>
+          <button
+            v-if="authStore.isAuthenticated"
+            @click="showLinkSuggestionModal = true"
+            class="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-blue-500 transition-colors"
           >
-            <img
-              v-if="availability.platform.logo"
-              :src="availability.platform.logo"
-              :alt="availability.platform.name"
-              class="w-12 h-12 object-contain rounded"
-            />
-            <div class="flex-1">
-              <p class="font-medium text-slate-900 dark:text-white">
-                {{ availability.platform.name }}
-              </p>
-              <p class="text-sm text-slate-500">
-                {{ availability.is_free ? t('common.free') : t('common.subscription') }}
-              </p>
-            </div>
-            <ExternalLink class="w-5 h-5 text-slate-400" />
-          </a>
+            <Plus class="w-4 h-4" />
+            {{ t('link.suggestLink') }}
+          </button>
         </div>
         <div v-else class="p-6 bg-slate-100 dark:bg-slate-800 rounded-lg text-center">
           <p class="text-slate-600 dark:text-slate-400 mb-2">
             {{ t('doc.noStreaming') }}
           </p>
-          <p class="text-sm text-slate-500 dark:text-slate-500">
+          <p class="text-sm text-slate-500 dark:text-slate-500 mb-4">
             {{ t('doc.helpStreaming') }}
           </p>
+          <button
+            v-if="authStore.isAuthenticated"
+            @click="showLinkSuggestionModal = true"
+            class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
+            <Plus class="w-4 h-4" />
+            {{ t('link.suggestLink') }}
+          </button>
         </div>
       </section>
 
@@ -304,5 +349,21 @@ onMounted(() => {
         </div>
       </section>
     </div>
+
+    <!-- Link Suggestion Modal -->
+    <LinkSuggestionModal
+      v-if="showLinkSuggestionModal && doc"
+      :documentary-id="doc.id"
+      @close="showLinkSuggestionModal = false"
+      @success="docStore.fetchDocumentary(props.slug)"
+    />
+
+    <!-- Link Report Modal -->
+    <LinkReportModal
+      v-if="showLinkReportModal && reportingAvailability"
+      :availability="reportingAvailability"
+      @close="closeReportModal"
+      @success="closeReportModal"
+    />
   </div>
 </template>

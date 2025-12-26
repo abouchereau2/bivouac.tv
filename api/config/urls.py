@@ -51,6 +51,7 @@ urlpatterns = [
     path("api/documentaries/", include("apps.documentaries.urls")),
     path("api/reviews/", include("apps.reviews.urls")),
     path("api/submissions/", include("apps.submissions.urls")),
+    path("api/notifications/", include("apps.notifications.urls")),
     path("api/users/", include("apps.users.urls")),
     # Authentication
     path("api/auth/", include("dj_rest_auth.urls")),

@@ -3,15 +3,64 @@ import { computed } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
-import { Mountain, Search, User, LogOut, Plus, Globe } from 'lucide-vue-next'
+import { useNotificationsStore } from '@/stores/notifications'
+import { Mountain, Search, User, LogOut, Plus, Globe, Shield, Bell, Check, ExternalLink } from 'lucide-vue-next'
 import { setLocale, SUPPORTED_LOCALES, type SupportedLocale } from '@/i18n'
 
-const { t, locale } = useI18n()
+const { t, te, locale } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
+const notificationsStore = useNotificationsStore()
 const isAuthenticated = computed(() => authStore.isAuthenticated)
 const user = computed(() => authStore.user)
+
+// Notification helpers
+function getNotificationTitle(notification: { notification_type: string; documentary_title?: string; title: string }) {
+  const titleKey = `notifications.titles.${notification.notification_type}`
+  if (te(titleKey)) {
+    return t(titleKey, { title: notification.documentary_title || '' })
+  }
+  return notification.title
+}
+
+function getNotificationMessage(notification: { notification_type: string; message: string }) {
+  const messageKey = `notifications.messages.${notification.notification_type}`
+  if (te(messageKey)) {
+    return t(messageKey)
+  }
+  return notification.message
+}
+
+function getNotificationIcon(type: string, status: string) {
+  // Pending notifications (awaiting review)
+  if (status === 'pending' || type.includes('_pending')) return 'pending'
+  // Positive outcomes
+  if (type.includes('approved') || type.includes('fixed')) return 'success'
+  // Negative/neutral outcomes
+  if (type.includes('rejected') || type.includes('dismissed')) return 'info'
+  return 'default'
+}
+
+function formatTimeAgo(dateString: string) {
+  const date = new Date(dateString)
+  const now = new Date()
+  const seconds = Math.floor((now.getTime() - date.getTime()) / 1000)
+
+  if (seconds < 60) return t('notifications.justNow')
+  if (seconds < 3600) return t('notifications.minutesAgo', { count: Math.floor(seconds / 60) })
+  if (seconds < 86400) return t('notifications.hoursAgo', { count: Math.floor(seconds / 3600) })
+  return t('notifications.daysAgo', { count: Math.floor(seconds / 86400) })
+}
+
+async function handleNotificationClick(notification: { id: number; read: boolean; documentary_slug?: string }) {
+  if (!notification.read) {
+    await notificationsStore.markAsRead(notification.id)
+  }
+  if (notification.documentary_slug) {
+    router.push(localePath(`/doc/${notification.documentary_slug}`))
+  }
+}
 
 // Get current language from route
 const currentLang = computed(() => (route.params.lang as string) || 'en')
@@ -103,6 +152,82 @@ async function handleLogout() {
               <Plus class="w-5 h-5" />
             </RouterLink>
 
+            <!-- Notifications -->
+            <div class="relative group">
+              <button class="relative p-2 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors">
+                <Bell class="w-5 h-5" />
+                <span
+                  v-if="notificationsStore.unreadCount > 0"
+                  class="absolute -top-0.5 -right-0.5 inline-flex items-center justify-center min-w-4 h-4 px-1 text-xs font-medium text-white rounded-full"
+                  :class="notificationsStore.hasPending ? 'bg-amber-500' : 'bg-red-500'"
+                >
+                  {{ notificationsStore.unreadCount > 9 ? '9+' : notificationsStore.unreadCount }}
+                </span>
+              </button>
+
+              <!-- Notifications dropdown -->
+              <div class="absolute right-0 mt-2 w-80 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all max-h-96 overflow-hidden flex flex-col">
+                <div class="flex items-center justify-between px-4 py-3 border-b border-slate-200 dark:border-slate-700">
+                  <h3 class="font-semibold text-slate-900 dark:text-white">{{ t('notifications.title') }}</h3>
+                  <button
+                    v-if="notificationsStore.hasUnread"
+                    @click.stop="notificationsStore.markAllAsRead()"
+                    class="text-xs text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
+                  >
+                    <Check class="w-3 h-3" />
+                    {{ t('notifications.markAllRead') }}
+                  </button>
+                </div>
+
+                <div class="overflow-y-auto flex-1">
+                  <div v-if="notificationsStore.notifications.length === 0" class="px-4 py-8 text-center text-slate-500 dark:text-slate-400">
+                    <Bell class="w-8 h-8 mx-auto mb-2 opacity-50" />
+                    <p>{{ t('notifications.empty') }}</p>
+                  </div>
+
+                  <button
+                    v-for="notification in notificationsStore.notifications.slice(0, 5)"
+                    :key="notification.id"
+                    @click="handleNotificationClick(notification)"
+                    class="w-full text-left px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors border-b border-slate-100 dark:border-slate-700 last:border-b-0"
+                    :class="{ 'bg-blue-50 dark:bg-blue-900/20': !notification.read }"
+                  >
+                    <div class="flex items-start gap-3">
+                      <div
+                        class="flex-shrink-0 w-2 h-2 mt-2 rounded-full"
+                        :class="{
+                          'bg-amber-500': getNotificationIcon(notification.notification_type, notification.status) === 'pending',
+                          'bg-green-500': getNotificationIcon(notification.notification_type, notification.status) === 'success',
+                          'bg-blue-500': getNotificationIcon(notification.notification_type, notification.status) === 'info',
+                          'bg-slate-400': getNotificationIcon(notification.notification_type, notification.status) === 'default',
+                        }"
+                      />
+                      <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-slate-900 dark:text-white truncate">
+                          {{ getNotificationTitle(notification) }}
+                        </p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-2">
+                          {{ getNotificationMessage(notification) }}
+                        </p>
+                        <p class="text-xs text-slate-400 dark:text-slate-500 mt-1">
+                          {{ formatTimeAgo(notification.created_at) }}
+                        </p>
+                      </div>
+                      <ExternalLink v-if="notification.documentary_slug" class="w-4 h-4 text-slate-400 flex-shrink-0" />
+                    </div>
+                  </button>
+                </div>
+
+                <RouterLink
+                  v-if="notificationsStore.notifications.length > 0"
+                  :to="localePath('/notifications')"
+                  class="block px-4 py-3 text-center text-sm text-blue-600 dark:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 border-t border-slate-200 dark:border-slate-700"
+                >
+                  {{ t('notifications.viewAll') }}
+                </RouterLink>
+              </div>
+            </div>
+
             <div class="relative group">
               <button class="flex items-center gap-2 p-2 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors">
                 <User class="w-5 h-5" />
@@ -134,6 +259,20 @@ async function handleLogout() {
                   class="block px-4 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
                 >
                   {{ t('nav.favorites') }}
+                </RouterLink>
+                <RouterLink
+                  v-if="authStore.isAdmin"
+                  :to="localePath('/admin')"
+                  class="block px-4 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2"
+                >
+                  <Shield class="w-4 h-4" />
+                  {{ t('nav.admin') }}
+                  <span
+                    v-if="authStore.pendingReviewCount > 0"
+                    class="ml-auto inline-flex items-center justify-center min-w-5 h-5 px-1.5 text-xs font-medium text-white bg-red-500 rounded-full"
+                  >
+                    {{ authStore.pendingReviewCount > 99 ? '99+' : authStore.pendingReviewCount }}
+                  </span>
                 </RouterLink>
                 <button
                   @click="handleLogout"

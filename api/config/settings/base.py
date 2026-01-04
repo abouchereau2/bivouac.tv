@@ -141,14 +141,13 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 # =============================================================================
 
-LANGUAGE_CODE = "en"
+LANGUAGE_CODE = "fr"
 TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
 
-# Supported languages
+# French only
 LANGUAGES = [
-    ("en", "English"),
     ("fr", "Français"),
 ]
 

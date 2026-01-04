@@ -3,14 +3,12 @@ import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useDocumentariesStore } from '@/stores/documentaries'
-import { useLocalePath } from '@/composables/useLocalePath'
 import { useLocalizedName } from '@/composables/useLocalizedName'
 import { Search, SlidersHorizontal, X, Loader2 } from 'lucide-vue-next'
 import DocCard from '@/components/docs/DocCard.vue'
 import type { DocumentaryFilters } from '@/types'
 
 const { t } = useI18n()
-const { currentLang } = useLocalePath()
 const { getName } = useLocalizedName()
 const route = useRoute()
 const router = useRouter()
@@ -55,13 +53,13 @@ async function applyFilters() {
   if (filters.value.is_free) query.is_free = 'true'
   if (filters.value.ordering) query.ordering = filters.value.ordering
 
-  await router.push({ params: { lang: currentLang.value }, query })
+  await router.push({ query })
 }
 
 function clearFilters() {
   searchQuery.value = ''
   filters.value = { ordering: '-year' }
-  router.push({ params: { lang: currentLang.value }, query: {} })
+  router.push({ query: {} })
 }
 
 function setupIntersectionObserver() {

@@ -442,7 +442,10 @@ TO DO:
 
 Sprint 1:
 - add platform icons in "where to watch" links in doc detail | to test with all platforms | ✅ Done |
-- make notifications better -> only one notif for pending/accepted/refused
+- make notifications better -> only one notif for pending/accepted/refused | ✅ Done |
+- go full french | ✅ Done |
+- change the main catch phrase, more like "extreme sports, nature, mountain etc documentaries", its currently too "sports themed"
+- add a List view like in senscritique, we want the "Tops"
 - users public watchlist:
   - add a full list creation/visualization made by users for public use
 - put all the filters on the footer
@@ -458,8 +461,8 @@ Sprint 1:
 - remove imdb rating
 - the + button in top right should be more visible, maybe "+ Add"
 - in notifications dahsboard, make a button to delete all
-- change the main catch phrase, more like "extreme sports, nature, mountain etc documentaries", its currently too "sports themed"
 - make the hero doc based on docs that have preferably in order: at least one link (mandatory), then randomly based on best stars reviews, likes and views
+- users can like other users reviews
 
 
 Sprint 2:

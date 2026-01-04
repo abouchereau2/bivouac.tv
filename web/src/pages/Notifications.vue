@@ -9,7 +9,7 @@ import type { NotificationStatus, Notification } from '@/types'
 
 const API_BASE = import.meta.env.VITE_API_URL || ''
 
-const { t, te } = useI18n()
+const { t } = useI18n()
 const { localePath } = useLocalePath()
 const router = useRouter()
 const notificationsStore = useNotificationsStore()
@@ -17,14 +17,6 @@ const notificationsStore = useNotificationsStore()
 const loading = computed(() => notificationsStore.loading)
 const notifications = computed(() => notificationsStore.notifications)
 const activeTab = ref<'all' | NotificationStatus>('all')
-
-function getNotificationTitle(notification: Notification) {
-  const titleKey = `notifications.titles.${notification.notification_type}`
-  if (te(titleKey)) {
-    return t(titleKey, { title: notification.documentary_title || t('notifications.unknownDoc') })
-  }
-  return notification.title
-}
 
 function getNotificationStatus(type: string) {
   // Pending notifications (awaiting review)

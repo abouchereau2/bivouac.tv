@@ -15,23 +15,23 @@ from .models import (
 
 @admin.register(Sport)
 class SportAdmin(admin.ModelAdmin):
-    list_display = ["name_en", "name_fr", "slug", "icon"]
-    search_fields = ["name_en", "name_fr"]
-    prepopulated_fields = {"slug": ("name_en",)}
+    list_display = ["name", "slug", "icon"]
+    search_fields = ["name"]
+    prepopulated_fields = {"slug": ("name",)}
 
 
 @admin.register(Theme)
 class ThemeAdmin(admin.ModelAdmin):
-    list_display = ["name_en", "name_fr", "slug"]
-    search_fields = ["name_en", "name_fr"]
-    prepopulated_fields = {"slug": ("name_en",)}
+    list_display = ["name", "slug"]
+    search_fields = ["name"]
+    prepopulated_fields = {"slug": ("name",)}
 
 
 @admin.register(Region)
 class RegionAdmin(admin.ModelAdmin):
-    list_display = ["name_en", "name_fr", "slug"]
-    search_fields = ["name_en", "name_fr"]
-    prepopulated_fields = {"slug": ("name_en",)}
+    list_display = ["name", "slug"]
+    search_fields = ["name"]
+    prepopulated_fields = {"slug": ("name",)}
 
 
 @admin.register(Person)
@@ -59,10 +59,10 @@ class AvailabilityInline(admin.TabularInline):
 class DocumentaryAdmin(admin.ModelAdmin):
     list_display = [
         "title", "year", "duration_display", "is_published", "is_featured",
-        "sports_display", "poster_preview", "synopsis_status"
+        "sports_display", "poster_preview", "has_synopsis"
     ]
     list_filter = ["is_published", "is_featured", "year", "sports", "themes"]
-    search_fields = ["title", "original_title", "synopsis_en", "synopsis_fr"]
+    search_fields = ["title", "original_title", "synopsis"]
     prepopulated_fields = {"slug": ("title",)}
     filter_horizontal = ["directors", "sports", "themes", "regions"]
     inlines = [AvailabilityInline]
@@ -71,13 +71,9 @@ class DocumentaryAdmin(admin.ModelAdmin):
         (None, {
             "fields": ["title", "original_title", "slug", "year", "duration_minutes"]
         }),
-        ("Synopsis (English)", {
-            "fields": ["synopsis_en"],
+        ("Synopsis", {
+            "fields": ["synopsis"],
             "classes": ["wide"]
-        }),
-        ("Synopsis (Français)", {
-            "fields": ["synopsis_fr"],
-            "classes": ["wide", "collapse"]
         }),
         ("Media", {
             "fields": ["poster", "backdrop", "trailer_url"]
@@ -94,13 +90,10 @@ class DocumentaryAdmin(admin.ModelAdmin):
         }),
     ]
 
-    def synopsis_status(self, obj):
-        """Show which languages have synopses."""
-        en = "EN" if obj.synopsis_en else ""
-        fr = "FR" if obj.synopsis_fr else ""
-        status = " / ".join(filter(None, [en, fr])) or "—"
-        return status
-    synopsis_status.short_description = "Synopsis"
+    def has_synopsis(self, obj):
+        """Show if documentary has a synopsis."""
+        return "✓" if obj.synopsis else "—"
+    has_synopsis.short_description = "Synopsis"
 
     def duration_display(self, obj):
         hours, minutes = divmod(obj.duration_minutes, 60)

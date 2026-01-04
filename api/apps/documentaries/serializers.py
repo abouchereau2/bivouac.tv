@@ -14,35 +14,22 @@ from .models import (
 )
 
 
-def get_request_language(context):
-    """Get language from request context."""
-    request = context.get("request")
-    if request:
-        # Try Accept-Language header first
-        accept_lang = request.META.get("HTTP_ACCEPT_LANGUAGE", "")
-        if accept_lang:
-            return accept_lang[:2]
-        # Fall back to LANGUAGE_CODE or 'en'
-        return getattr(request, "LANGUAGE_CODE", "en")[:2]
-    return "en"
-
-
 class SportSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sport
-        fields = ["id", "name_en", "name_fr", "slug", "icon"]
+        fields = ["id", "name", "slug", "icon"]
 
 
 class ThemeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Theme
-        fields = ["id", "name_en", "name_fr", "slug"]
+        fields = ["id", "name", "slug"]
 
 
 class RegionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Region
-        fields = ["id", "name_en", "name_fr", "slug"]
+        fields = ["id", "name", "slug"]
 
 
 class PersonSerializer(serializers.ModelSerializer):
@@ -116,7 +103,6 @@ class DocumentaryHeroSerializer(serializers.ModelSerializer):
 
     sports = SportSerializer(many=True, read_only=True)
     themes = ThemeSerializer(many=True, read_only=True)
-    synopsis = serializers.SerializerMethodField()
     average_rating = serializers.ReadOnlyField()
 
     class Meta:
@@ -125,11 +111,6 @@ class DocumentaryHeroSerializer(serializers.ModelSerializer):
             "id", "title", "slug", "year", "duration_minutes",
             "synopsis", "backdrop", "poster", "sports", "themes", "average_rating"
         ]
-
-    def get_synopsis(self, obj):
-        """Return synopsis based on request language preference."""
-        lang = get_request_language(self.context)
-        return obj.get_synopsis(lang)
 
 
 class DocumentaryDetailSerializer(serializers.ModelSerializer):
@@ -145,7 +126,6 @@ class DocumentaryDetailSerializer(serializers.ModelSerializer):
     is_in_watchlist = serializers.SerializerMethodField()
     is_watched = serializers.SerializerMethodField()
     is_favorited = serializers.SerializerMethodField()
-    synopsis = serializers.SerializerMethodField()
 
     class Meta:
         model = Documentary
@@ -157,11 +137,6 @@ class DocumentaryDetailSerializer(serializers.ModelSerializer):
             "availabilities", "average_rating", "review_count",
             "is_in_watchlist", "is_watched", "is_favorited", "created_at", "updated_at"
         ]
-
-    def get_synopsis(self, obj):
-        """Return synopsis based on request language preference."""
-        lang = get_request_language(self.context)
-        return obj.get_synopsis(lang)
 
     def get_is_in_watchlist(self, obj):
         request = self.context.get("request")

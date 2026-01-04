@@ -1,15 +1,14 @@
-import { useI18n } from 'vue-i18n'
-
 interface LocalizedItem {
-  name_en: string
-  name_fr: string
+  name: string
 }
 
+/**
+ * Composable for getting item names (French-only version).
+ * Kept for backward compatibility.
+ */
 export function useLocalizedName() {
-  const { locale } = useI18n()
-
   function getName(item: LocalizedItem): string {
-    return locale.value === 'fr' ? item.name_fr || item.name_en : item.name_en || item.name_fr
+    return item.name
   }
 
   return { getName }

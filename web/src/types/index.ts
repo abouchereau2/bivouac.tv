@@ -2,23 +2,20 @@
 
 export interface Sport {
   id: number
-  name_en: string
-  name_fr: string
+  name: string
   slug: string
   icon?: string
 }
 
 export interface Theme {
   id: number
-  name_en: string
-  name_fr: string
+  name: string
   slug: string
 }
 
 export interface Region {
   id: number
-  name_en: string
-  name_fr: string
+  name: string
   slug: string
 }
 

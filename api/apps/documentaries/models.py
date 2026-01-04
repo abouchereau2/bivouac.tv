@@ -7,91 +7,55 @@ from django.utils.text import slugify
 class Sport(models.Model):
     """Sport/activity category (climbing, surf, ski, etc.)."""
 
-    name_en = models.CharField(max_length=100, verbose_name="Name (English)")
-    name_fr = models.CharField(max_length=100, verbose_name="Name (French)")
+    name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True)
     icon = models.CharField(max_length=50, blank=True, help_text="Lucide icon name")
 
     class Meta:
-        ordering = ["name_en"]
+        ordering = ["name"]
 
     def __str__(self):
-        return self.name_en
-
-    def get_name(self, language: str = "en") -> str:
-        """Get name in requested language with fallback."""
-        if language == "fr":
-            return self.name_fr or self.name_en
-        return self.name_en or self.name_fr
-
-    @property
-    def name(self) -> str:
-        """Backward compatibility - returns English name."""
-        return self.name_en
+        return self.name
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.name_en)
+            self.slug = slugify(self.name)
         super().save(*args, **kwargs)
 
 
 class Theme(models.Model):
     """Documentary theme (wildlife, expedition, portrait, etc.)."""
 
-    name_en = models.CharField(max_length=100, verbose_name="Name (English)")
-    name_fr = models.CharField(max_length=100, verbose_name="Name (French)")
+    name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True)
 
     class Meta:
-        ordering = ["name_en"]
+        ordering = ["name"]
 
     def __str__(self):
-        return self.name_en
-
-    def get_name(self, language: str = "en") -> str:
-        """Get name in requested language with fallback."""
-        if language == "fr":
-            return self.name_fr or self.name_en
-        return self.name_en or self.name_fr
-
-    @property
-    def name(self) -> str:
-        """Backward compatibility - returns English name."""
-        return self.name_en
+        return self.name
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.name_en)
+            self.slug = slugify(self.name)
         super().save(*args, **kwargs)
 
 
 class Region(models.Model):
     """Geographic region (Alps, Patagonia, Nepal, etc.)."""
 
-    name_en = models.CharField(max_length=100, verbose_name="Name (English)")
-    name_fr = models.CharField(max_length=100, verbose_name="Name (French)")
+    name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True)
 
     class Meta:
-        ordering = ["name_en"]
+        ordering = ["name"]
 
     def __str__(self):
-        return self.name_en
-
-    def get_name(self, language: str = "en") -> str:
-        """Get name in requested language with fallback."""
-        if language == "fr":
-            return self.name_fr or self.name_en
-        return self.name_en or self.name_fr
-
-    @property
-    def name(self) -> str:
-        """Backward compatibility - returns English name."""
-        return self.name_en
+        return self.name
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.name_en)
+            self.slug = slugify(self.name)
         super().save(*args, **kwargs)
 
 
@@ -153,23 +117,11 @@ class Documentary(models.Model):
         validators=[MinValueValidator(1), MaxValueValidator(600)]
     )
 
-    # Content (multilingual)
-    synopsis_en = models.TextField(blank=True, verbose_name="Synopsis (English)")
-    synopsis_fr = models.TextField(blank=True, verbose_name="Synopsis (French)")
+    # Content
+    synopsis = models.TextField(blank=True)
     poster = models.ImageField(upload_to="posters/", blank=True)
     backdrop = models.ImageField(upload_to="backdrops/", blank=True)
     trailer_url = models.URLField(blank=True)
-
-    def get_synopsis(self, language: str = "en") -> str:
-        """Get synopsis in requested language with fallback."""
-        if language == "fr":
-            return self.synopsis_fr or self.synopsis_en or ""
-        return self.synopsis_en or self.synopsis_fr or ""
-
-    @property
-    def synopsis(self) -> str:
-        """Backward compatibility - returns English synopsis with fallback."""
-        return self.synopsis_en or self.synopsis_fr or ""
 
     # Relations
     directors = models.ManyToManyField(Person, related_name="directed", blank=True)

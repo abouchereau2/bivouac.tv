@@ -437,33 +437,51 @@ uv run python manage.py autotag_ai --api-key $ANTHROPIC_API_KEY
 | ~~Pagination~~ | Infinite scroll implemented | ✅ Done |
 | ~~Profile editing~~ | Edit username and bio | ✅ Done |
 
-whats next:
+
+TO DO:
+
+Sprint 1:
+- add platform icons in "where to watch" links in doc detail | to test with all platforms | ✅ Done |
+- make notifications better -> only one notif for pending/accepted/refused
+- users public watchlist:
+  - add a full list creation/visualization made by users for public use
+- put all the filters on the footer
+- user profile enhancements:
+  - add funny pre loaded avatars, based on our themes
+  - or user can add a profile picture
+  - create and give badges to users based on their commitment
+  - add a most proficient users section in home page
+  - show user badges next to their profile (in reviews, etc)
+- from detailed doc view, make the directors name clickable, and filter docs
+- from detailed doc view, make the Region name clickable, and filter docs
+- enhance general theme
+- remove imdb rating
+- the + button in top right should be more visible, maybe "+ Add"
+- in notifications dahsboard, make a button to delete all
+- change the main catch phrase, more like "extreme sports, nature, mountain etc documentaries", its currently too "sports themed"
+- make the hero doc based on docs that have preferably in order: at least one link (mandatory), then randomly based on best stars reviews, likes and views
+
+
+Sprint 2:
 - proper scrapping workflow
   - i find the list of documentaries title, we need to:
   - check tmdb to find basic metadata
   - if not found, or if found but sometimes we have no posters, no synopsis (very important) or no trailer, so we need to scrap that
   - use AI to generate tags / location
   - find a way to scrap "Where to watch links"
-- user profile enhancements:
-  - add funny pre loaded avatars, based on our themes
-  - or user can add a profile picture
-  - user can add new documentaries
-  - user can add new "Where to watch links"
-  - create and give badges to users based on their commitment
-  - add a most proficient users section in home page
-  - show user badges next to their profile (in reviews, etc)
-- users public watchlist:
-  - add a full list creation/visualization made by users for public use
-- we have 'add to watchlist', we need know 'watched' | ✅ Done |
-- add a 'favorite' list + icon | ✅ Done |
-- when user commits some changes, add a system of admin queue validation (me) | ✅ Done |
-- enhance homepage, like justwatch, with "sliders" of movies based on popular themes, like 'popular', 'survival', 'mountain', etc...  | ✅ Done |
-- put all the filters on the footer
-- make the website fr / eng trad | ✅ Done |
-- from detailed doc view, make the directors name clickable, and filter docs
-- add public API
-- add platform icons in "where to watch" links in doc detail | ✅ Done |
+- fix current data
+- find more
+
+
+Sprint 3:
+- how to make whole website pro -> cookies??
+- how to generate money from links?
+- how to deploy?
 - optimize
+
+Optional:
+- add public API
+
 
 ---
 
